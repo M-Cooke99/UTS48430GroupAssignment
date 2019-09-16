@@ -3,11 +3,19 @@
 #include <stdlib.h>
 #include <math.h>
 
+
+/******************************************************************************
+ * FUNCTION PROTOTYPES
+******************************************************************************/
 int studentMain(void);
 int adminMain(void);
 void printStudentMenu(int* choicep);
 void printAdminMenu(int* choicep);
 
+
+/******************************************************************************
+ * MAIN 
+******************************************************************************/
 int main(int argc, char *argv[]) {
 	if (argc <= 1){
 		printf("Specify runtime mode\n");
@@ -26,11 +34,12 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
+
 /******************************************************************************
  * Student main: menu options
 ******************************************************************************/
 int studentMain(void){
-	int choice;
+	int choice = 0;
 
 	/* Verify Student ID */
 
@@ -44,6 +53,7 @@ int studentMain(void){
 	return 0;
 }
 
+
 /******************************************************************************
  * Prints student menu options
 ******************************************************************************/
@@ -56,21 +66,25 @@ void printStudentMenu(int* choicep){
     scanf("%d", choicep);
 }
 
+
 /******************************************************************************
  * Read student number, password and check validity. maybe three seperate 
  * functions?
 ******************************************************************************/
+
 
 /******************************************************************************
  * Timetable view function: prints the students timetable 
  * chronologically per line
 ******************************************************************************/
 
+
 /******************************************************************************
  * Personal details function: prints the students details. Maybe give the
  * the student an option to edit his details? This is usually possible in
  * similar real world implementations
 ******************************************************************************/
+
 
 /******************************************************************************
  * Admin main: menu options
@@ -89,6 +103,7 @@ int adminMain(void){
 	return 0;
 }
 
+
 /******************************************************************************
  * Prints admin menu options 
 ******************************************************************************/
@@ -102,16 +117,19 @@ void printAdminMenu(int* choicep){
     scanf("%d", choicep);
 }
 
+
 /******************************************************************************
  * Timetable edit function: This will be a big function, try to keep it modular
  * Swap, add or remove students from course timetable. ... More?
 ******************************************************************************/
+
 
 /******************************************************************************
  * View Course Information function: prints all courses' lectures and
  * tutorials with amount of students. Possibly add option to select a course to
  * view its members?
 ******************************************************************************/
+
 
 /******************************************************************************
  * View all enrolled students function: prints list of all students enrolled.
