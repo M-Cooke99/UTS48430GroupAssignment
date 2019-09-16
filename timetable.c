@@ -90,7 +90,7 @@ void printStudentMenu(int* choicep){
 int adminMain(void){
 	int choice;
 	
-	do { printStudentMenu(&choice);
+	do { printAdminMenu(&choice);
         switch (choice){
             case 1: /* Timetable Editing Function */  break;
             case 2: /* Course Information Function */ break;
@@ -111,7 +111,7 @@ void printAdminMenu(int* choicep){
     "2. Show Course Information\n"
     "3. Show all enrolled students\n"
     "4. Exit Program\n"
-    "Enter Choice (number between 1-3)>\n");
+    "Enter Choice (number between 1-4)>\n");
     scanf("%d", choicep);
 }
 
