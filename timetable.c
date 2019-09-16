@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-void studentMain(void);
-void adminMain(void);
+int studentMain(void);
+int adminMain(void);
+void printStudentMenu(int* choicep);
+void printAdminMenu(int* choicep);
 
 int main(int argc, char *argv[]) {
 	if (argc <= 1){
@@ -27,13 +29,37 @@ int main(int argc, char *argv[]) {
 /******************************************************************************
  * Student main: menu options
 ******************************************************************************/
-void studentMain(void){
-
+int studentMain(void){
+	int choice;
+	return 0;
 }
+
+
+
+/******************************************************************************
+ * Prints student menu options
+******************************************************************************/
+void printStudentMenu(int* choicep){
+	
+}
+
+/******************************************************************************
+ * Read student number, password and check validity. maybe three seperate 
+ * functions?
+******************************************************************************/
 
 /******************************************************************************
  * Admin main: menu options
 ******************************************************************************/
-void adminMain(void){
-
+int adminMain(void){
+	int choice;
+	return 0;
 }
+
+/******************************************************************************
+ * Prints admin menu options
+******************************************************************************/
+void printAdminMenu(int* choicep){
+	
+}
+
