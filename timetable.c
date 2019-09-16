@@ -96,7 +96,7 @@ void printAdminMenu(int* choicep){
 	printf("\n"
     "1. Edit Timetable\n"
     "2. Show Course Information\n"
-    "3. Show all enrolled students"
+    "3. Show all enrolled students\n"
     "4. Exit Program\n"
     "Enter Choice (number between 1-3)>\n");
     scanf("%d", choicep);
