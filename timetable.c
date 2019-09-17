@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
  * Student main: menu options
 ******************************************************************************/
 int studentMain(void){
-	int choice = 0;
+	int choice;
 
 	/* Verify Student ID */
 
