@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Werror
 LIBS = -lm
-DEPS = timetable.h
+DEPS = huffman.h
 
 #create .o file 
 %.o: %.c $(DEPS)
@@ -9,9 +9,9 @@ DEPS = timetable.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 #create executable file
-timetable: timetable.o
+huffman: huffman.o
 	echo "Building $@"
-	$(CC) $(CFLAGS) -o timetable timetable.o $(LIBS) 
+	$(CC) $(CFLAGS) -o huffman huffman.o $(LIBS) 
 
 #prevent 'make' from doing something with a file named clean
 .PHONY: clean

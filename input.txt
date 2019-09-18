@@ -1,0 +1,3 @@
+This file is a test file for the huffman compression
+
+Hello, my name is Oezguen and I am from Munich, Germany. 
