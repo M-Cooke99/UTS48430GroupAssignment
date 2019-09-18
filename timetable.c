@@ -1,7 +1,70 @@
+/******************************************************************************
+ * DESCRPITPION:
+******************************************************************************/
+
+/******************************************************************************
+ * HEADER FILES + PREPROCESSING DIRECTIVES
+******************************************************************************/
 #include <stdio.h> /*printf, scanf*/
 #include <string.h> /*strcmp*/
 #include "timetable.h" 
 
+/******************************************************************************
+ * STRUCTURES
+******************************************************************************/
+struct birthday
+{
+	int year, month, day;
+};
+typedef struct birthday birthday_t;
+
+struct address
+{
+	int houseNumber;
+	char [20] streetName;
+};
+typedef struct address address_t;
+
+struct personal
+{
+	birthday_t birthday;
+	address_t address;
+	long phoneNum;
+};
+typedef struct personal personal_t;
+
+struct student
+{
+	int number;
+	char [20] name;
+	char [20] password;
+	personal_t personalInfo;
+};
+typedef struct student student_t;
+
+struct time
+{
+	int day, hour, minute;
+};
+typedef struct time time_t;
+
+struct slot
+{
+	char [4] type;
+	char [20] lecturer;
+	int building, floor, room;
+	time_t start;
+	time_t end;
+};
+typedef struct slot slot_t;
+
+struct course
+{
+	int code;
+	char [20] lecturer;
+	slot_t slot0, slot1, slot2, slot3, slot4, slot5, slot6;
+};
+typedef struct course course_t;
 
 /******************************************************************************
  * FUNCTION PROTOTYPES
