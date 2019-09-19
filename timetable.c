@@ -252,8 +252,7 @@ void printAdminMenu(int* choicep){
  * OUT: None
 ******************************************************************************/
 void addStu(void){
-	/* Add student to a course's lec/lab or just in general add a student? 
-			-Victor */
+	
 }
 
 /******************************************************************************
@@ -297,8 +296,7 @@ void printStu(void){
  * OUT: None
 ******************************************************************************/
 void printCourse(void){
-	/* Print the timetable for every course? Or give option to select a course
-	to show? -Victor */
+	
 }
 
 /******************************************************************************
@@ -308,8 +306,7 @@ void printCourse(void){
  * OUT: None
 ******************************************************************************/
 void printClass(void){
-	/* Wouldn't this be better to include as  a sub option at printCourse?
-			-Victor */
+	
 }
 /******************************************************************************
  * Prints the number of students enrolled and a list of their student numbers
@@ -318,7 +315,7 @@ void printClass(void){
  * OUT: None
 ******************************************************************************/
 void printEnrollment(void){
-	/* Enrolled per course or also per slot? -Victor*/
+	
 }
 
 /******************************************************************************
