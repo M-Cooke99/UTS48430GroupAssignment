@@ -70,7 +70,7 @@ typedef struct course course_t;
  * FUNCTION PROTOTYPES
 ******************************************************************************/
 void getStuNum(long* stuNump);
-int checkStuNum(void);
+int checkStuNum(long stuNum);
 int studentMain(void);
 void printStuMenu(int* choicep);
 void printStuTimetable(int StuNum);
@@ -130,7 +130,7 @@ void getStuNum(long* stuNump){
  * IN: None
  * OUT: 0 if successful
 ******************************************************************************/
-int checkStuNum(void){ 
+int checkStuNum(long stuNum){ 
 
 }
 
