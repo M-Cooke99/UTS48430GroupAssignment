@@ -73,8 +73,8 @@ void getStuNum(long* stuNump);
 int checkStuNum(long stuNum);
 int studentMain(void);
 void printStuMenu(int* choicep);
-void printStuTimetable(int StuNum);
-void printStuDetails(int StuNum);
+void printStuTimetable(int stuNum);
+void printStuDetails(int stuNum);
 int adminMain(void);
 void printAdminMenu(int* choicep);
 void addStu(void);
@@ -178,7 +178,7 @@ void printStuMenu(int* choicep){
  * IN: Student number for the timetable to be printed
  * OUT: 
 ******************************************************************************/
-void printStuTimetable(int StuNum){
+void printStuTimetable(int stuNum){
 	
 }
 
@@ -188,7 +188,7 @@ void printStuTimetable(int StuNum){
  * IN: The student number for the details to be printed
  * OUT: None
 ******************************************************************************/
-void printStuDetails(int StuNum){
+void printStuDetails(int stuNum){
 	
 }
 
