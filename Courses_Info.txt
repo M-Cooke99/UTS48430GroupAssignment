@@ -1,0 +1,23 @@
+100 Mathematics
+Lec1: mon - 08:00 to 10:00 - CB10.00.001
+Lec2: wed - 14:00 to 16:00 - CB10.00.002
+Lab1: tue - 10:00 to 11:00 - CB10.05.230
+Lab2: thu - 10:00 to 11:00 - CB10.06.109
+
+101 Finance
+Lec1: tue - 15:00 to 16:30 - CB10.01.022
+Lec2: wed - 14:00 to 15:30 - CB10.01.022
+Lab1: fri - 09:00 to 10:00 - CB09.04.122
+Lab2: thu - 16:00 to 17:00 - CB09.04.140
+
+102 Art
+Lec1: mon - 10:00 to 12:00 - CB04.02.100
+Lec2: tue - 17:00 to 19:00 - CB04.00.006
+Lab1: fri - 11:00 to 12:00 - CB04.01.230
+Lab2: thu - 15:00 to 16:00 - CB04.03.200
+
+103 Biology
+Lec1: wed - 08:00 to 10:00 - CB01.00.101
+Lec2: mon - 19:00 to 21:00 - CB01.00.101
+Lab1: tue - 08:00 to 09:30 - CB06.08.004
+Lab2: thu - 09:00 to 10:30 - CB06.05.235
