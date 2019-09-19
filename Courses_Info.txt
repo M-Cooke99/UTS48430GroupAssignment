@@ -1,23 +1,32 @@
-100 Mathematics
-Lec1: mon - 08:00 to 10:00 - CB10.00.001
-Lec2: wed - 14:00 to 16:00 - CB10.00.002
-Lab1: tue - 10:00 to 11:00 - CB10.05.230
-Lab2: thu - 10:00 to 11:00 - CB10.06.109
-
-101 Finance
-Lec1: tue - 15:00 to 16:30 - CB10.01.022
-Lec2: wed - 14:00 to 15:30 - CB10.01.022
-Lab1: fri - 09:00 to 10:00 - CB09.04.122
-Lab2: thu - 16:00 to 17:00 - CB09.04.140
-
-102 Art
-Lec1: mon - 10:00 to 12:00 - CB04.02.100
-Lec2: tue - 17:00 to 19:00 - CB04.00.006
-Lab1: fri - 11:00 to 12:00 - CB04.01.230
-Lab2: thu - 15:00 to 16:00 - CB04.03.200
-
-103 Biology
-Lec1: wed - 08:00 to 10:00 - CB01.00.101
-Lec2: mon - 19:00 to 21:00 - CB01.00.101
-Lab1: tue - 08:00 to 09:30 - CB06.08.004
-Lab2: thu - 09:00 to 10:30 - CB06.05.235
+ 
+100 Mathematics - Lecturer: Doris Wilson
+Lec1: mon 08:00 to mon 10:00 - CB10.00.001 - Doris Wilson
+Lec2: wed 14:00 to wed 16:00 - CB10.00.002 - Doris Wilson
+Lab1: tue 10:00 to tue 11:00 - CB10.05.230 - Jobe Watt
+Lab2: thu 10:00 to thu 11:00 - CB10.06.109 - Georgie Osborn
+Tut1: wed 10:00 to wed 11:00 - CB11.05.200 - Georgie Osbor
+Tut2: wed 10:00 to wed 11:00 - CB11.05.202 - Jobe Watt
+ 
+101 Finance - Lecturer: Franklin Giles
+Lec1: tue 15:00 to tue 16:30 - CB10.01.022 - Franklin Giles
+Lec2: wed 14:00 to wed 15:30 - CB10.01.022 - Tobi Bowman
+Lab1: fri 09:00 to fri 10:00 - CB09.04.122 - Jillian Forrest
+Lab2: thu 16:00 to thu 17:00 - CB09.04.140 - Tobi Bowman
+Tut1: fri 10:00 to fri 11:00 - CB09.04.122 - Jillian Forrest
+Tut2: thu 17:00 to fri 18:00 - CB09.04.140 - Tobi Bowman
+ 
+102 Art - Lecturer: Saira Kearney
+Lec1: mon 10:00 to mon 12:00 - CB04.02.100 - Saira Kearney
+Lec2: tue 17:00 to tue 19:00 - CB04.00.006 - Saira Kearney
+Lab1: fri 11:00 to fri 12:00 - CB04.01.230 - Saira Kearney
+Lab2: thu 15:00 to thu 16:00 - CB04.03.200 - Lillie-May Butler
+Tut1: tue 10:00 to fri 11:00 - CB04.04.100 - Lillie-May Butler
+Tut2: thu 13:00 to fri 14:00 - CB04.04.200 - Saim Goldsmith
+ 
+103 Biology - Lecturer: Kavan Whitaker
+Lec1: wed 08:00 to wed 10:00 - CB01.00.101 - Jobe Watt
+Lec2: mon 19:00 to mon 21:00 - CB01.00.101 - Bert Kemp
+Lab1: tue 08:00 to tue 09:30 - CB06.08.004 - Kavan Whitaker
+Lab2: thu 09:00 to thu 10:30 - CB06.05.235 - Bert Kemp
+Tut1: mon 10:00 to fri 11:00 - CB03.05.100 - Kavan Whitake
+Tut2: fri 19:00 to fri 20:00 - CB03.02.200 - Jarred Alfaro
