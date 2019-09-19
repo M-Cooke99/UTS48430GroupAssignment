@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
 }
 
 /******************************************************************************
- * Asks for the user to enter a student number until a vaild one is entered
+ * Asks for the user to enter a student number until a valid one is entered
  * Author: Michael
  * IN: The storage location to save the student number
  * OUT: None
@@ -124,7 +124,7 @@ void getStuNum(long* stuNump){
 		
 		if (checkStuNum(stuNum) != 0)
 		{
-			printf("Student Number Invaild");	
+			printf("Student Number Invalid");	
 		}	
 		
 	}while (checkStuNum(stuNum) != 0);
@@ -175,7 +175,7 @@ void printStuMenu(int* choicep){
     "1. View Timetable\n"
     "2. View Personal Details\n"
     "3. Exit Program\n"
-    "Enter Choice (number between 1-3)>\n");
+    "Enter Choice (number between 1-3)> ");
     scanf("%d", choicep);
 }
 
@@ -186,7 +186,8 @@ void printStuMenu(int* choicep){
  * OUT: 
 ******************************************************************************/
 void printStuTimetable(int stuNum){
-	
+	/* Wouldn't it be better to save a student's timetable in its struct? 
+	 		- Victor */
 }
 
 /******************************************************************************
@@ -214,10 +215,10 @@ int adminMain(void){
             case 2: void removeStu(void) break;
             case 3: void editStu(void) break;
             case 4: void printStu(void) break;
-	    case 5: void printCourse(void) break;
-	    case 6: void printClass(void) break;
-	    case 7: void printEnrollment() break;
-	    case 8: break;
+	    	case 5: void printCourse(void) break;
+	    	case 6: void printClass(void) break;
+	    	case 7: void printEnrollment() break;
+	    	case 8: break;
             default: printf("Invalid choice\n");} 
     } while (choice != 8);
 	return 0;
@@ -240,7 +241,7 @@ void printAdminMenu(int* choicep){
     "6. Show Class information\n"
     "7. Show all enrolled students\n"
     "8. Exit Program\n"
-    "Enter Choice (number between 1-8)>\n");
+    "Enter Choice (number between 1-8)> ");
     scanf("%d", choicep);
 }
 
@@ -251,7 +252,8 @@ void printAdminMenu(int* choicep){
  * OUT: None
 ******************************************************************************/
 void addStu(void){
-	
+	/* Add student to a course's lec/lab or just in general add a student? 
+			-Victor */
 }
 
 /******************************************************************************
@@ -295,7 +297,8 @@ void printStu(void){
  * OUT: None
 ******************************************************************************/
 void printCourse(void){
-	
+	/* Print the timetable for every course? Or give option to select a course
+	to show? -Victor */
 }
 
 /******************************************************************************
@@ -305,7 +308,8 @@ void printCourse(void){
  * OUT: None
 ******************************************************************************/
 void printClass(void){
-	
+	/* Wouldn't this be better to include as  a sub option at printCourse?
+			-Victor */
 }
 /******************************************************************************
  * Prints the number of students enrolled and a list of their student numbers
@@ -314,7 +318,7 @@ void printClass(void){
  * OUT: None
 ******************************************************************************/
 void printEnrollment(void){
-	
+	/* Enrolled per course or also per slot? -Victor*/
 }
 
 /******************************************************************************
