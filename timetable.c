@@ -76,11 +76,11 @@ typedef struct course course_t;
  * FUNCTION PROTOTYPES
 ******************************************************************************/
 void getStuNum(long* stuNump);
-int checkStuNum(void);
+int checkStuNum(long stuNum);
 int studentMain(void);
 void printStuMenu(int* choicep);
-void printStuTimetable(int StuNum);
-void printStuDetails(int StuNum);
+void printStuTimetable(int stuNum);
+void printStuDetails(int stuNum);
 int adminMain(void);
 void printAdminMenu(int* choicep);
 void addStu(void);
@@ -137,7 +137,7 @@ void getStuNum(long* stuNump){
  * IN: None
  * OUT: 0 if successful
 ******************************************************************************/
-int checkStuNum(void){ 
+int checkStuNum(long stuNum){ 
 
 }
 
@@ -185,7 +185,7 @@ void printStuMenu(int* choicep){
  * IN: Student number for the timetable to be printed
  * OUT: 
 ******************************************************************************/
-void printStuTimetable(int StuNum){
+void printStuTimetable(int stuNum){
 	
 }
 
@@ -195,7 +195,7 @@ void printStuTimetable(int StuNum){
  * IN: The student number for the details to be printed
  * OUT: None
 ******************************************************************************/
-void printStuDetails(int StuNum){
+void printStuDetails(int stuNum){
 	
 }
 
@@ -214,10 +214,10 @@ int adminMain(void){
             case 2: void removeStu(void) break;
             case 3: void editStu(void) break;
             case 4: void printStu(void) break;
-			case 5: void printCourse(void) break;
-			case 6: void printClass(void) break;
-			case 7: void printEnrollment() break;
-			case 8: break;
+	    case 5: void printCourse(void) break;
+	    case 6: void printClass(void) break;
+	    case 7: void printEnrollment() break;
+	    case 8: break;
             default: printf("Invalid choice\n");} 
     } while (choice != 8);
 	return 0;
@@ -231,13 +231,13 @@ int adminMain(void){
  * OUT: None
 ******************************************************************************/
 void printAdminMenu(int* choicep){
-	printf("\n"
- 	"1. Add Student\n"
-	"2. Remove Student\n"
-	"3. Edit Student\n"
+    printf("\n"
+    "1. Add Student\n"
+    "2. Remove Student\n"
+    "3. Edit Student\n"
     "4. View Student Timetable and Details\n"
     "5. Show Course Information\n"
-	"6. Show Class information\n"
+    "6. Show Class information\n"
     "7. Show all enrolled students\n"
     "8. Exit Program\n"
     "Enter Choice (number between 1-8)>\n");
