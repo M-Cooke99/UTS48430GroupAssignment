@@ -9,6 +9,9 @@
 #include <string.h> /*strcmp*/
 #include "timetable.h" 
 
+#define COURSES_FILE "Courses_Info.txt"
+#define SLOT_NUM 6
+
 /******************************************************************************
  * STRUCTURES
 ******************************************************************************/
@@ -21,7 +24,7 @@ typedef struct birthday birthday_t;
 struct address
 {
 	int houseNumber;
-	char [20] streetName;
+	char streetName[20];
 };
 typedef struct address address_t;
 
@@ -36,33 +39,36 @@ typedef struct personal personal_t;
 struct student
 {
 	int number;
-	char [20] name;
-	char [20] password;
+	char name[20] ;
+	char password[20] ;
 	personal_t personalInfo;
 };
 typedef struct student student_t;
 
-struct time
+struct timeC
 {
-	int day, hour, minute;
+	int hour, minute;
+	char day[4];
 };
-typedef struct time time_t;
+typedef struct timeC timeC_t;
 
 struct slot
 {
-	char [4] type;
-	char [20] lecturer;
+	char type[4];
+	int group;
+	char lecturer[20];
 	int building, floor, room;
-	time_t start;
-	time_t end;
+	timeC_t start;
+	timeC_t end;
 };
 typedef struct slot slot_t;
 
 struct course
 {
 	int code;
-	char [20] lecturer;
-	slot_t slot0, slot1, slot2, slot3, slot4, slot5, slot6;
+	char name[20];
+	char lecturer[20];
+	slot_t slot_a[SLOT_NUM];
 };
 typedef struct course course_t;
 
@@ -84,6 +90,7 @@ void printStu(void);
 void printCourse(void);
 void printClass(void);
 void printEnrollment();
+int loadCourse(course_t AllCourses[]);
 /******************************************************************************
  * MAIN 
 ******************************************************************************/
@@ -308,4 +315,50 @@ void printClass(void){
 ******************************************************************************/
 void printEnrollment(void){
 	
+}
+
+/******************************************************************************
+ * Load the informations of one course from the txt file
+ * Author: Quentin
+ * IN: the number of the course that we want to load
+ * OUT: The number of courses loaded from the file returned as an int
+******************************************************************************/
+int loadCourse(course_t AllCourses[])
+{
+	int i, j;
+	char line[10];
+
+    FILE* database = NULL;
+    database = fopen(COURSES_FILE, "r");
+ 
+    if (database != NULL)
+    {
+         
+        for(i=0; fgets(line, 10, database) != NULL; i++)
+        {
+        	/*Scan of the course general infos*/
+            fscanf(database, "%d %s - Lecturer: %s",
+            	&AllCourses[i].code, AllCourses[i].name, AllCourses[i].lecturer);
+
+            /*Scan of each course slot infos*/
+            for(j=0; j < SLOT_NUM; j++)
+            {
+            	fscanf(database, "%s%d: %s %2d:%2d to %s %2d:%2d - CB%2d.%2d.%3d - %s",
+            		AllCourses[i].slot_a[j].type, &AllCourses[i].slot_a[j].group, 
+            		AllCourses[i].slot_a[j].start.day, &AllCourses[i].slot_a[j].start.hour,
+            		&AllCourses[i].slot_a[j].start.minute, AllCourses[i].slot_a[j].end.day, 
+            		&AllCourses[i].slot_a[j].end.hour, &AllCourses[i].slot_a[j].end.minute,
+            		&AllCourses[i].slot_a[j].building, &AllCourses[i].slot_a[j].floor, 
+            		&AllCourses[i].slot_a[j].room, AllCourses[i].slot_a[j].lecturer);	
+            }
+        }
+ 
+        fclose(database);
+    }
+    else
+    {
+        printf("Read error\n");
+    }
+    
+    return i;
 }
