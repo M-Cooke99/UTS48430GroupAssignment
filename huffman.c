@@ -33,7 +33,7 @@ min_heap_node_t* createNode (char data, int frequency);
 min_heap_t* createMinHeap (int capacity);
 
 /* swap two nodes */
-void swapNodes (min_heap_node_t* node_a, min_heap_node_t* node_b);
+void swapNodes (min_heap_node_t** node_a, min_heap_node_t** node_b);
 
 /* apply min heapify on a subtree starting from a given index */
 void minHeapify (min_heap_t* min_heap, int index);
@@ -54,12 +54,25 @@ min_heap_t* createAndBuildMinHeap (char data[], int frequency[], int size);
 /* build a huffman tree */
 min_heap_node_t* buildHuffmanTree (char data[], int frequency[], int size);
 
+/* assign the huffman code to the characters */
+void createCode (min_heap_node_t* node, int array[], int current_node);
+
+/* apply the huffman coding on data */
+void HuffmanCompression(char data[], int freq[], int size);
+
 
 /***********************************************************************************
  * MAIN 
  **********************************************************************************/
 int main (void) {
-    puts("hi");
+    
+    char array[] = { 'a', 'b', 'c', 'd', 'e', 'f' }; 
+    int frequency[] = { 5, 9, 12, 13, 16, 45 }; 
+  
+    int size = sizeof(array) / sizeof(array[0]); 
+  
+    HuffmanCompression(array, frequency, size); 
+
     return 0;
 }
 
@@ -93,10 +106,10 @@ min_heap_t* createMinHeap (int capacity) {
     return min_heap;
 }
 
-void swapNodes (min_heap_node_t* node_a, min_heap_node_t* node_b) {
-    min_heap_node_t* temp = node_a;
-    node_a = node_b;
-    node_b = temp;
+void swapNodes (min_heap_node_t** node_a, min_heap_node_t** node_b) {
+    min_heap_node_t* temp = *node_a;
+    *node_a = *node_b;
+    *node_b = temp;
 }
 
 void minHeapify (min_heap_t* min_heap, int index) {
@@ -123,7 +136,7 @@ void minHeapify (min_heap_t* min_heap, int index) {
 
     /* check if there was a node with a lower freq */
     if(smallest != index) {
-        swapNodes((*min_heap).array[smallest], (*min_heap).array[index]); 
+        swapNodes(&(*min_heap).array[smallest], &(*min_heap).array[index]); 
         /* apply min heapify on subtree of the swapped node */
         minHeapify(min_heap, smallest);
     }
@@ -214,9 +227,37 @@ min_heap_node_t* buildHuffmanTree (char data[], int frequency[], int size) {
     return extractMin(min_heap);
 }
 
+void createCode (min_heap_node_t* node, int array[], int current_node) {
+    if (node->left) {
+        /* assign 0 to the left node */
+        array[current_node] = 0;
+        createCode(node->left, array, (current_node+1));
+    }
 
+    if (node->right) {
+        /* assign 1 to the right node */
+        array[current_node] = 1;
+        createCode(node->right, array, (current_node+1));
+    }    
 
+    if (node->left == NULL && node->right == NULL) {
+        printf("%c: ", node->data); 
+        int i;
+        for(i = 0; i < current_node; i++) {
+            printf("%d", array[i]);
+        }
+        printf("\n");
+    }
+}
 
+void HuffmanCompression(char data[], int freq[], int size) {
+    min_heap_node_t* root = buildHuffmanTree(data, freq, size);
+
+    int array[100];
+    int current_node = 0;
+
+    createCode(root, array, current_node);
+}
 
 
 
