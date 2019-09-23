@@ -120,14 +120,14 @@ int main(int argc, char *argv[]) {
 ******************************************************************************/
 void getStuNum(long* stuNump){
 	do {printf ("Enter Student Number\n");
-		scanf ("%li",&stuNum);
+		scanf ("%li",stuNump);
 		
-		if (checkStuNum(stuNum) != 0)
+		if (checkStuNum(*stuNump) != 0)
 		{
 			printf("Student Number Invalid");	
 		}	
 		
-	}while (checkStuNum(stuNum) != 0);
+	}while (checkStuNum(*stuNump) != 0);
 
 }
 
@@ -138,7 +138,7 @@ void getStuNum(long* stuNump){
  * OUT: 0 if successful
 ******************************************************************************/
 int checkStuNum(long stuNum){ 
-
+	return 0;
 }
 
 
@@ -156,8 +156,8 @@ int studentMain(void){
 
 	do { printStuMenu(&choice);
         switch (choice){
-            case 1: printStuTimetable(stuNum) break;
-            case 2: printStuDetails(stuNum) break;
+            case 1: printStuTimetable(stuNum); break;
+            case 2: printStuDetails(stuNum); break;
             case 3: break;
             default: printf("Invalid choice\n");} 
     } while (choice != 3);
@@ -211,13 +211,13 @@ int adminMain(void){
 	
 	do { printAdminMenu(&choice);
         switch (choice){
-            case 1: void addStu(void) break;
-            case 2: void removeStu(void) break;
-            case 3: void editStu(void) break;
-            case 4: void printStu(void) break;
-	    	case 5: void printCourse(void) break;
-	    	case 6: void printClass(void) break;
-	    	case 7: void printEnrollment() break;
+            case 1: addStu(); break;
+            case 2: removeStu(); break;
+            case 3: editStu(); break;
+            case 4: printStu(); break;
+	    	case 5: printCourse(); break;
+	    	case 6: printClass(); break;
+	    	case 7: printEnrollment(); break;
 	    	case 8: break;
             default: printf("Invalid choice\n");} 
     } while (choice != 8);
@@ -308,6 +308,7 @@ void printCourse(void){
 void printClass(void){
 	
 }
+
 /******************************************************************************
  * Prints the number of students enrolled and a list of their student numbers
  * Author:
