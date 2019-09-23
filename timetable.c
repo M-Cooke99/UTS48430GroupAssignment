@@ -114,6 +114,7 @@ int main(int argc, char *argv[]) {
 
 /******************************************************************************
  * Asks for the user to enter a student number until a valid one is entered
+ * Should return student struct
  * Author: Michael
  * IN: The storage location to save the student number
  * OUT: None
@@ -133,6 +134,8 @@ void getStuNum(long* stuNump){
 
 /******************************************************************************
  * Reads a student number and checks validity
+ * input should be student struct
+ * Should 
  * Author:
  * IN: None
  * OUT: 0 if successful
@@ -181,6 +184,7 @@ void printStuMenu(int* choicep){
 
 /******************************************************************************
  * Prints the students timetable, chronologically per line
+ * Assume input to be student struct in which an array of ....
  * Author:
  * IN: Student number for the timetable to be printed
  * OUT: 
@@ -192,6 +196,7 @@ void printStuTimetable(int stuNum){
 
 /******************************************************************************
  * Prints the students details
+ * Assume student struct as input
  * Author:
  * IN: The student number for the details to be printed
  * OUT: None
@@ -218,7 +223,7 @@ int adminMain(void){
 	    	case 5: printCourse(); break;
 	    	case 6: printClass(); break;
 	    	case 7: printEnrollment(); break;
-	    	case 8: break;
+	    	case 8: break; /* for later: save edited information */
             default: printf("Invalid choice\n");} 
     } while (choice != 8);
 	return 0;
@@ -277,6 +282,7 @@ void editStu(void){
 
 /******************************************************************************
  * Prints a students details followed by their timetable
+ * Will change depending on student main functions!
  * Author: Michael
  * IN: None
  * OUT: None
