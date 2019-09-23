@@ -19,17 +19,7 @@ int main (int argc, char* argv[]) {
     } else {
         char* input_file = argv[1];
         data_t* linked_list = countOccurrences(input_file);
-        saveLinkedList(linked_list);
-    }
-
-    data_t* ptr = loadLinkedList(CODE_FILE);
-
-    int size = getSize(ptr);
-    printf("Size of linked list: %d\n", size);
-
-    while (ptr != NULL) {
-        printf("%c %d\n", ptr->character, ptr->occurrence);
-        ptr = ptr->next;
+        saveData(linked_list);
     }
 
 	return 0;
@@ -130,66 +120,14 @@ data_t* countOccurrences(char file_name[]) {
     return head;
 }
 
-void saveLinkedList(data_t* linked_list) {
+void saveData(data_t* linked_list) {
     FILE* fptr = fopen(CODE_FILE, "w");
-
     data_t* ptr = linked_list;
+
     while (ptr != NULL) {
-        fprintf(fptr, "%c%d", ptr->character, ptr->occurrence);
+        fprintf(fptr, "%c %-10d\n", ptr->character, ptr->occurrence);
         ptr = ptr->next;
     }
 
     fclose(fptr);
 }
-
-data_t* loadLinkedList(char file_name[]) {
-    FILE* fptr = fopen(file_name, "r");
-
-    data_t* linked_list = NULL;
-
-    if (fptr == NULL) {
-        printf("Error reading the file!\n");
-    } else {
-        char character;
-        int occurrence;
-
-        data_t* ptr = NULL;
-        data_t* prev_ptr = NULL;
-        char first_datapoint = 1;
-
-        while (fscanf(fptr, "%c%d", &character, &occurrence) != EOF) {
-            ptr = (data_t*) malloc(sizeof(data_t));
-
-            if (first_datapoint) {
-                linked_list = ptr;
-                first_datapoint = 0;
-            } else {
-                prev_ptr->next = ptr;
-            }
-
-            prev_ptr = ptr;
-            ptr->character = character;
-            ptr->occurrence = occurrence;
-            ptr->next = NULL;
-        } 
-
-    }
-
-    fclose(fptr);
-    return linked_list;
-}
-
-int getSize(data_t* linked_list) {
-    data_t* ptr = linked_list;
-
-    int size = 0;
-    while (ptr != NULL) {
-        size++;
-        ptr = ptr->next;
-    }
-
-    return size;
-}
-
-
-

@@ -19,10 +19,10 @@ int main (int argc, char* argv[]) {
     } else {
         char* input_file = argv[1];
         data_t* linked_list = countOccurrences(input_file);
-        saveLinkedList(linked_list);
+        saveData(linked_list);
     }
 
-    data_t* ptr = loadLinkedList(CODE_FILE);
+    data_t* ptr = loadData(CODE_FILE);
 
     int size = getSize(ptr);
     printf("Size of linked list: %d\n", size);
@@ -130,7 +130,7 @@ data_t* countOccurrences(char file_name[]) {
     return head;
 }
 
-void saveLinkedList(data_t* linked_list) {
+void saveData(data_t* linked_list) {
     FILE* fptr = fopen(CODE_FILE, "w");
 
     data_t* ptr = linked_list;
@@ -142,7 +142,7 @@ void saveLinkedList(data_t* linked_list) {
     fclose(fptr);
 }
 
-data_t* loadLinkedList(char file_name[]) {
+data_t* loadData(char file_name[]) {
     FILE* fptr = fopen(file_name, "r");
 
     data_t* linked_list = NULL;

@@ -19,14 +19,10 @@ int main (int argc, char* argv[]) {
     } else {
         char* input_file = argv[1];
         data_t* linked_list = countOccurrences(input_file);
-        saveLinkedList(linked_list);
+        saveData(linked_list);
     }
 
-    data_t* ptr = loadLinkedList(CODE_FILE);
-
-    int size = getSize(ptr);
-    printf("Size of linked list: %d\n", size);
-
+    data_t* ptr = loadData(CODE_FILE);
     while (ptr != NULL) {
         printf("%c %d\n", ptr->character, ptr->occurrence);
         ptr = ptr->next;
@@ -130,10 +126,18 @@ data_t* countOccurrences(char file_name[]) {
     return head;
 }
 
-void saveLinkedList(data_t* linked_list) {
+void saveData(data_t* linked_list) {
     FILE* fptr = fopen(CODE_FILE, "w");
 
+    /*int size = 0;*/
     data_t* ptr = linked_list;
+   /* while (ptr != NULL) {
+        size++;
+        ptr = ptr->next;
+    }
+    fprintf(fptr, "%d\n", size);
+
+    ptr = linked_list;*/
     while (ptr != NULL) {
         fprintf(fptr, "%c%d", ptr->character, ptr->occurrence);
         ptr = ptr->next;
@@ -142,8 +146,10 @@ void saveLinkedList(data_t* linked_list) {
     fclose(fptr);
 }
 
-data_t* loadLinkedList(char file_name[]) {
+data_t* loadData(char file_name[]) {
     FILE* fptr = fopen(file_name, "r");
+
+
 
     data_t* linked_list = NULL;
 
@@ -153,9 +159,32 @@ data_t* loadLinkedList(char file_name[]) {
         char character;
         int occurrence;
 
+        /*int size;
+
+        fscanf(fptr, "%d", &size);*/
+
         data_t* ptr = NULL;
         data_t* prev_ptr = NULL;
         char first_datapoint = 1;
+
+        /*int i;
+        for (i = 0; i<size; i++) {
+            fscanf(fptr, "%c %d", &character, &occurrence);
+
+            ptr = (data_t*) malloc(sizeof(data_t));
+
+            if (first_datapoint) {
+                linked_list = ptr;
+                first_datapoint = 0;
+            } else {
+                prev_ptr->next = ptr;
+            }
+
+            prev_ptr = ptr;
+            ptr->character = character;
+            ptr->occurrence = occurrence;
+            ptr->next = NULL;
+        }*/
 
         while (fscanf(fptr, "%c%d", &character, &occurrence) != EOF) {
             ptr = (data_t*) malloc(sizeof(data_t));
@@ -179,17 +208,7 @@ data_t* loadLinkedList(char file_name[]) {
     return linked_list;
 }
 
-int getSize(data_t* linked_list) {
-    data_t* ptr = linked_list;
 
-    int size = 0;
-    while (ptr != NULL) {
-        size++;
-        ptr = ptr->next;
-    }
-
-    return size;
-}
 
 
 
