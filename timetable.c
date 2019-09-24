@@ -107,6 +107,8 @@ void testPrint(studentNode_t* studentListp);
 int saveStudentList(studentNode_t* head);
 int loadStudentList(studentNode_t** head);
 void getPhoneNumber(student_t* stup);
+int validStuNum(int number);
+int validDate(int day, int month, int year);
 /******************************************************************************
  * MAIN 
  * Author: Victor
@@ -137,6 +139,7 @@ int main(int argc, char *argv[]) {
  * OUT: None
 ******************************************************************************/
 void getStuNum(long* stuNump){
+	/* Similar function getNumber used for addStu, can probably get rid of one */
 	do {printf ("Enter Student Number\n");
 		scanf ("%li",stuNump);
 		
@@ -333,27 +336,70 @@ void getName(student_t* stup){
 
 /******************************************************************************
  * Asks for student number input and stores it in student struct
- * !! Probably needs an intermediate check on validity !!
  * Author: Victor
  * IN: pointer to a student struct
  * OUT: None
 ******************************************************************************/
 void getNumber(student_t* stup){
-	printf("Enter student number> ");
-	scanf("%d",&(*stup).number);
+	int temp;
+	do {
+		printf("Enter student number> ");
+		scanf("%d", &temp);
+
+		if (!validStuNum(temp)){
+			printf("Invalid student number.\n");
+		}
+
+	} while (!validStuNum(temp));
+	
+	(*stup).number = temp;
+}
+
+/******************************************************************************
+ * Checks if student number input is valid
+ * -> 8 digit student ID is what we want right?
+ * Author: Victor
+ * IN: integer of the student number
+ * OUT: 1 if valid, 0 if invalid
+******************************************************************************/
+int validStuNum(int number){
+	return (number >= 10000000 && number <= 99999999);
 }
 
 /******************************************************************************
  * Asks for student's birthday input and stores it in student struct
- * !! Probably needs an intermediate check on validity !!
  * Author: Victor
  * IN: pointer to a student struct
  * OUT: None
 ******************************************************************************/
 void getBirthday(student_t* stup){
-	printf("Enter birthday consisting of day, month, year, seperated by spaces> ");
-	scanf("%d%d%d", &(*stup).personalInfo.birthday.day,
-		&(*stup).personalInfo.birthday.month,&(*stup).personalInfo.birthday.year);
+	int day, month, year;
+
+	do {
+		printf("Enter birthday consisting of day, month, year,"
+			" seperated by spaces> ");
+		scanf("%d%d%d", &day, &month, &year);
+
+		if(!validDate(day, month, year)){
+			printf("Invalid date.");
+		}
+
+	} while (!validDate(day, month, year));
+	
+	(*stup).personalInfo.birthday.day = day;
+	(*stup).personalInfo.birthday.month = month;
+	(*stup).personalInfo.birthday.year = year;
+}
+
+/******************************************************************************
+ * Checks if the date information put in is valid
+ * Author: Victor
+ * IN: integers for day, month and year
+ * OUT: 1 if valid, 0 if invalid
+******************************************************************************/
+int validDate(int day, int month, int year){
+	return (day >= 1 && day <= 31) && (month >= 1 && month <= 12) &&
+	(year >= 1900 && year <= 2018);
 }
 
 /******************************************************************************
@@ -370,6 +416,13 @@ void getAddress(student_t* stup){
 		(*stup).personalInfo.address.streetName);
 }
 
+/******************************************************************************
+ * Asks for student's phone number input and stores it in student struct
+ * How do we want to check if the number is valid?
+ * Author: Victor
+ * IN: pointer to a student struct
+ * OUT: None
+******************************************************************************/
 void getPhoneNumber(student_t* stup){
 	printf("Enter phone number> ");
 	scanf("%ld",&(*stup).personalInfo.phoneNum);
