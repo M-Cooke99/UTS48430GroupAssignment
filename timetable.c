@@ -106,6 +106,7 @@ void getAddress(student_t* stu);
 void testPrint(studentNode_t* studentListp);
 int saveStudentList(studentNode_t* head);
 int loadStudentList(studentNode_t** head);
+void getPhoneNumber(student_t* stup);
 /******************************************************************************
  * MAIN 
  * Author: Victor
@@ -251,7 +252,7 @@ int adminMain(void){
 	int choice;
 	studentNode_t* studentListp;
 	studentListp = NULL;
-	
+
 	do { printAdminMenu(&choice);
         switch (choice){
             case 1: addStu(&studentListp); break;
@@ -301,6 +302,7 @@ void addStu(studentNode_t** head){
 	strncpy(new.password,"default",20);
 	getBirthday(&new);
 	getAddress(&new);
+	getPhoneNumber(&new);
 
 	if (*head == NULL){
 		*head = (studentNode_t*) malloc(sizeof(studentNode_t));
@@ -366,6 +368,11 @@ void getAddress(student_t* stup){
 		" seperated by a space> ");
 	scanf("%d%s",&(*stup).personalInfo.address.houseNumber,
 		(*stup).personalInfo.address.streetName);
+}
+
+void getPhoneNumber(student_t* stup){
+	printf("Enter phone number> ");
+	scanf("%ld",&(*stup).personalInfo.phoneNum);
 }
 
 /******************************************************************************
@@ -497,7 +504,14 @@ int saveStudentList(studentNode_t* head){
     studentNode_t* current = head;
 
     while (current != NULL){
-    	fwrite(&(current->stu),1,sizeof(current->stu),fp);
+    	fprintf(fp, "%8d %20s pw: %20s %2d/%2d/%4d %3d %20s %10ld\n",
+    		current->stu.number,current->stu.name,current->stu.password,
+    		current->stu.personalInfo.birthday.day,
+    		current->stu.personalInfo.birthday.month,
+    		current->stu.personalInfo.birthday.year,
+    		current->stu.personalInfo.address.houseNumber,
+    		current->stu.personalInfo.address.streetName,
+    		current->stu.personalInfo.phoneNum);
     	current = current->nextp;
     }
 
@@ -509,7 +523,7 @@ int saveStudentList(studentNode_t* head){
 
 /******************************************************************************
  * Loads the linked list of students from a txt file
- * !! NOT FUNCTIONING AT THIS STAGE !!
+ * !! Currently compiles but has segmentation fault !!
  * Author: Victor
  * IN: pointer to the pointer to the first node in the linked list of students
  * OUT: 0 if succesfull, 1 if unsuccesfull
@@ -526,8 +540,16 @@ int loadStudentList(studentNode_t** head){
     *head = (studentNode_t*) malloc(sizeof(studentNode_t));
     studentNode_t* current = *head;
 
-    while (fread(&(current->stu), sizeof(current->stu), 1, fp)){
-    	current = current -> nextp;
+    while (!feof(fp)){
+    	fscanf(fp, "%8d %20s pw: %20s %2d/%2d/%4d %3d %20s %10ld\n",
+    		&current->stu.number,current->stu.name,current->stu.password,
+    		&current->stu.personalInfo.birthday.day,
+    		&current->stu.personalInfo.birthday.month,
+    		&current->stu.personalInfo.birthday.year,
+    		&current->stu.personalInfo.address.houseNumber,
+    		current->stu.personalInfo.address.streetName,
+    		&current->stu.personalInfo.phoneNum);
+    	current = current->nextp;
     }
 
     fclose(fp);
