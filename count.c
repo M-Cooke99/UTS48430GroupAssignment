@@ -19,17 +19,17 @@ int main (int argc, char* argv[]) {
     } else {
         char* input_file = argv[1];
         data_t* linked_list = countOccurrences(input_file);
-        saveLinkedList(linked_list);
-    }
+        saveLinkedList(CODE_FILE, linked_list);
 
-    data_t* ptr = loadLinkedList(CODE_FILE);
+        data_t* ptr = loadLinkedList(CODE_FILE);
 
-    int size = getSize(ptr);
-    printf("Size of linked list: %d\n", size);
+        int size = getSize(ptr);
+        printf("Size of linked list: %d\n", size);
 
-    while (ptr != NULL) {
-        printf("%c %d\n", ptr->character, ptr->occurrence);
-        ptr = ptr->next;
+        while (ptr != NULL) {
+            printf("%c %d\n", ptr->character, ptr->occurrence);
+            ptr = ptr->next;
+        }
     }
 
 	return 0;
@@ -43,86 +43,69 @@ data_t* countOccurrences(char file_name[]) {
     /* pointers for the linked list */
     data_t* ptr = NULL;
     data_t* prev_ptr = NULL;
-    char first_datapoint = 1;
-    char add_new_datapoint = 1;
     data_t* head = NULL;
+
+    char first_datapoint = 1;
+    char add_new_datapoint;
 
     /* create new data point */
     ptr = (data_t*) malloc(sizeof(data_t));
-
+    ptr->code = NULL;
+    ptr->next = NULL;
     /* store pointer pointing to the top of the linked list */
     head = ptr;
 
     /* open file to read from */
     FILE *fptr = fopen(file_name, "r");
 
-    /* variables for reading the file */
-    input_string_t* input_string = (input_string_t*) malloc(sizeof(input_string_t));
-    input_string->str = NULL;
-    char* buffer = NULL;
-    size_t buffer_length = 0; 
-    int nb_characters = 0;
+    /* variable to store characters read from the file */
+    char character;
 
     if (fptr == NULL) {
         printf("Error reading the file!\n");
     } else {
-        /* for the for loop below */
-        int i;
-
         /* read the line from the file */
-        while ((nb_characters = getline(&buffer, &buffer_length, fptr)) != -1) {
-            input_string->str = buffer;
+        while ((fscanf(fptr, "%c", &character)) != EOF) {
+            add_new_datapoint = 1;
 
             /* save the newline (\n) by using special character ^ (caret) */
-            if(input_string->str[nb_characters-1] == '\n') {
-                input_string->str[nb_characters-1] = '^';
+            if(character == '\n') {
+                character = '^';
             }
 
-            input_string->str_length = nb_characters;
-
-            /* determine the occurrences of the characters */
-            for(i = 0; i < input_string->str_length; i++) {
-                add_new_datapoint = 1;
-
-                /* check if data point for the current character already exists */
-                data_t* aux_ptr = head;
-                while (aux_ptr != NULL) {
-                    /* if so, increment occurrence of the character */
-                    if (aux_ptr->character == input_string->str[i]) {
-                        aux_ptr->occurrence++;
-                        add_new_datapoint = 0;
-                        break;
-                    }
-
-                    aux_ptr = aux_ptr->next;
+            /* check if data point for the current character already exists */
+            data_t* aux_ptr = head;
+            while (aux_ptr != NULL) {
+                /* if so, increment occurrence of the character */
+                if (aux_ptr->character == character) {
+                    aux_ptr->occurrence++;
+                    add_new_datapoint = 0;
+                    break;
                 }
 
-                /* if no data point for the current character exists */
-                if (add_new_datapoint) {
-                    if (first_datapoint) {
-                        /* don't need to allocate new memory for first data point */
-                        first_datapoint = 0;
-                    } else {
-                        ptr = (data_t*) malloc(sizeof(data_t));
-                        prev_ptr->next = ptr;
-                    }
-
-                    prev_ptr = ptr;
-                    ptr->character = input_string->str[i];
-                    /* obviously the character occurs at least once if a new 
-                     * data point is needed */
-                    ptr->occurrence = 1;
-                    ptr->next = NULL; 
-                }        
+                aux_ptr = aux_ptr->next;
             }
+
+            /* if no data point for the current character exists */
+            if (add_new_datapoint) {
+                if (first_datapoint) {
+                    /* don't need to allocate new memory for first data point */
+                    first_datapoint = 0;
+                } else {
+                    ptr = (data_t*) malloc(sizeof(data_t));
+                    prev_ptr->next = ptr;
+                }
+
+                prev_ptr = ptr;
+                ptr->character = character;
+                /* obviously the character occurs at least once if a new 
+                 * data point is needed */
+                ptr->occurrence = 1;
+                ptr->code = NULL;
+                ptr->next = NULL; 
+            }           
         }
     }
-
-    /* free the pointers used to read the file*/
-    free(buffer);
-    buffer = NULL;
-    free(input_string);
-    input_string = NULL;
 
     /* close the file after reading its content */
     fclose(fptr);
@@ -130,8 +113,8 @@ data_t* countOccurrences(char file_name[]) {
     return head;
 }
 
-void saveLinkedList(data_t* linked_list) {
-    FILE* fptr = fopen(CODE_FILE, "w");
+void saveLinkedList(char file_name[], data_t* linked_list) {
+    FILE* fptr = fopen(file_name, "w");
 
     data_t* ptr = linked_list;
     while (ptr != NULL) {
@@ -170,6 +153,7 @@ data_t* loadLinkedList(char file_name[]) {
             prev_ptr = ptr;
             ptr->character = character;
             ptr->occurrence = occurrence;
+            ptr->code = NULL;
             ptr->next = NULL;
         } 
 

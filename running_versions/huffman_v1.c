@@ -1,65 +1,21 @@
+/* 
+ * author: Oezguen Turgut 
+ * date: 23/09/2019
+ * description: read a textfile, compress it, and decompress it again
+ */
+
 #include <stdio.h>
 #include "huffman.h"
 
 
 /***********************************************************************************
- * STRUCTURES 
- **********************************************************************************/
-/* a node of the huffman tree*/
-struct min_heap_node {
-    char data; 
-    int frequency; /* occurance of the data in the input text */
-    struct min_heap_node *left;     /* left child node */
-    struct min_heap_node *right;    /* right child node */
-};
-typedef struct min_heap_node min_heap_node_t;
-
-/* huffman tree */
-struct min_heap {
-    int size;       /* current size */
-    int capacity;   /* maximum size */
-    min_heap_node_t** array; /* array of min_heap_node pointers */
-};
-typedef struct min_heap min_heap_t;
-
-
-/***********************************************************************************
- * FUNCTION PROTOTYPES 
- **********************************************************************************/
-/* create a node for a given character */
-min_heap_node_t* createNode (char data, int frequency);
-
-/* create a min heap */
-min_heap_t* createMinHeap (int capacity);
-
-/* swap two nodes */
-void swapNodes (min_heap_node_t* node_a, min_heap_node_t* node_b);
-
-/* apply min heapify on a subtree starting from a given index */
-void minHeapify (min_heap_t* min_heap, int index);
-
-/* extract node with lowest freq from heap */
-min_heap_node_t* extractMin (min_heap_t* min_heap);
-
-/* insert a new node to the min heap tree */
-void insertNode (min_heap_t* min_heap, min_heap_node_t* node);
-
-/* build a min heap tree */
-void buildMinHeap (min_heap_t* min_heap);
-
-/* create a min heap tree of capacity equal to size and insert all characters 
- * of the array data[] in the tree */
-min_heap_t* createAndBuildMinHeap (char data[], int frequency[], int size);
-
-/* build a huffman tree */
-min_heap_node_t* buildHuffmanTree (char data[], int frequency[], int size);
-
-
-/***********************************************************************************
  * MAIN 
  **********************************************************************************/
-int main (void) {
-    puts("hi");
+int main (int argc, char* argv[]) {
+
+	data_t* linked_list = loadLinkedList(CODE_FILE);
+    HuffmanCompression(linked_list); 
+
     return 0;
 }
 
@@ -93,10 +49,10 @@ min_heap_t* createMinHeap (int capacity) {
     return min_heap;
 }
 
-void swapNodes (min_heap_node_t* node_a, min_heap_node_t* node_b) {
-    min_heap_node_t* temp = node_a;
-    node_a = node_b;
-    node_b = temp;
+void swapNodes (min_heap_node_t** node_a, min_heap_node_t** node_b) {
+    min_heap_node_t* temp = *node_a;
+    *node_a = *node_b;
+    *node_b = temp;
 }
 
 void minHeapify (min_heap_t* min_heap, int index) {
@@ -123,7 +79,7 @@ void minHeapify (min_heap_t* min_heap, int index) {
 
     /* check if there was a node with a lower freq */
     if(smallest != index) {
-        swapNodes((*min_heap).array[smallest], (*min_heap).array[index]); 
+        swapNodes(&(*min_heap).array[smallest], &(*min_heap).array[index]); 
         /* apply min heapify on subtree of the swapped node */
         minHeapify(min_heap, smallest);
     }
@@ -169,16 +125,22 @@ void buildMinHeap (min_heap_t* min_heap) {
         minHeapify(min_heap, i);
 }
 
-min_heap_t* createAndBuildMinHeap (char data[], int frequency[], int size) {
+min_heap_t* createAndBuildMinHeap (data_t* linked_list) {
+	int size = getSize(linked_list);
+
     /* create the min heap */
     min_heap_t* min_heap = createMinHeap(size);
     /* set size of the min heap */
     (*min_heap).size = size;
 
-    /* create a node for each character in the array data[] */
-    int i;
-    for (i = 0; i < size; i++)
-        (*min_heap).array[i] = createNode(data[i], frequency[i]);
+    /* create a node for each character in the linked list */
+    data_t* ptr = linked_list;
+    int i = 0;
+    while (ptr != NULL) {
+    	(*min_heap).array[i] = createNode(ptr->character, ptr->occurrence);
+    	ptr = ptr->next; 
+    	i++;
+    }
 
     /* build the min heap */
     buildMinHeap(min_heap);
@@ -186,12 +148,12 @@ min_heap_t* createAndBuildMinHeap (char data[], int frequency[], int size) {
     return min_heap;
 }
 
-min_heap_node_t* buildHuffmanTree (char data[], int frequency[], int size) {
+min_heap_node_t* buildHuffmanTree (data_t* linked_list) {
     /* define node and children */
     min_heap_node_t *left, *right, *top;
 
     /* create and build a min heap tree */
-    min_heap_t* min_heap = createAndBuildMinHeap(data, frequency, size);
+    min_heap_t* min_heap = createAndBuildMinHeap(linked_list);
 
     while (min_heap->size != 1) {
         /* node with lowest freq is left child */
@@ -214,10 +176,94 @@ min_heap_node_t* buildHuffmanTree (char data[], int frequency[], int size) {
     return extractMin(min_heap);
 }
 
+void createCode (data_t* linked_list, min_heap_node_t* node, 
+	int* code, int current_node) {
+    if (node->left) {
+        /* assign 0 to the left node */
+        code[current_node] = 0;
+        createCode(linked_list, node->left, code, (current_node+1));
+    }
 
+    if (node->right) {
+        /* assign 1 to the right node */
+        code[current_node] = 1;
+        createCode(linked_list, node->right, code, (current_node+1));
+    }    
 
+    if (node->left == NULL && node->right == NULL) {
+    	data_t* ptr = linked_list;
+    	while (ptr->character != node->data) {
+    		ptr = ptr->next;
+    	}
 
+    	ptr->code = code;
 
+        printf("%c: ", ptr->character); 
+        int i;
+        for(i = 0; i < current_node; i++) {
+            printf("%d", ptr->code[i]);
+        }
+        printf("\n");
+    }
+}
 
+void HuffmanCompression(data_t* linked_list) {
+    min_heap_node_t* root = buildHuffmanTree(linked_list);
+
+    int* code = (int*) malloc(CODE_SIZE * sizeof(int));
+    int current_node = 0;
+
+    createCode(linked_list, root, code, current_node);
+}
+
+data_t* loadLinkedList(char file_name[]) {
+    FILE* fptr = fopen(file_name, "r");
+
+    data_t* linked_list = NULL;
+
+    if (fptr == NULL) {
+        printf("Error reading the file!\n");
+    } else {
+        char character;
+        int occurrence;
+
+        data_t* ptr = NULL;
+        data_t* prev_ptr = NULL;
+        char first_datapoint = 1;
+
+        while (fscanf(fptr, "%c %d ", &character, &occurrence) != EOF) {
+            ptr = (data_t*) malloc(sizeof(data_t));
+
+            if (first_datapoint) {
+                linked_list = ptr;
+                first_datapoint = 0;
+            } else {
+                prev_ptr->next = ptr;
+            }
+
+            prev_ptr = ptr;
+            ptr->character = character;
+            ptr->occurrence = occurrence;
+            ptr->code = NULL;
+            ptr->next = NULL;
+        } 
+
+    }
+
+    fclose(fptr);
+    return linked_list;
+}
+
+int getSize(data_t* linked_list) {
+    data_t* ptr = linked_list;
+
+    int size = 0;
+    while (ptr != NULL) {
+        size++;
+        ptr = ptr->next;
+    }
+
+    return size;
+}
 
 

@@ -1,6 +1,6 @@
 /* 
  * author: Oezguen Turgut 
- * date: 23/09/2019
+ * date: 24/09/2019
  * description: read a textfile, compress it, and decompress it again
  */
 
@@ -11,10 +11,15 @@
 /***********************************************************************************
  * MAIN 
  **********************************************************************************/
-int main (void) {
+int main (int argc, char* argv[]) {
 
-	data_t* linked_list = loadLinkedList(CODE_FILE);
-    HuffmanCompression(linked_list); 
+    /* check if file to compress is passed to the program */
+    if (argc < 2) {
+        printf("Syntax error: Argument file is missing.\n");
+    } else {
+        char* input_file = argv[1];
+        HuffmanCompression(input_file); 
+    }
 
     return 0;
 }
@@ -23,13 +28,13 @@ int main (void) {
 /***********************************************************************************
  * FUNCTION DEFINITION 
  **********************************************************************************/
-min_heap_node_t* createNode (char data, int frequency) {
+min_heap_node_t* createNode (char character, int occurrence) {
     /* create a new node */
     min_heap_node_t* node = (min_heap_node_t*) malloc(sizeof(min_heap_node_t));
     
     /* set all attributes */
-    (*node).data = data;
-    (*node).frequency = frequency;
+    (*node).character = character;
+    (*node).occurrence = occurrence;
     (*node).left = NULL;
     (*node).right = NULL;
 
@@ -66,14 +71,14 @@ void minHeapify (min_heap_t* min_heap, int index) {
     /* check if there is a left child at all */
     if (left < min_heap->size) {
         /* check if freq of left child is lower than freq of current node */
-        if (min_heap->array[left]->frequency < min_heap->array[smallest]->frequency) 
+        if (min_heap->array[left]->occurrence < min_heap->array[smallest]->occurrence) 
             smallest = left;
     }
 
     /* check if there is a right child at all */
     if (right < min_heap->size) {
         /* check if freq of right child is lower than freq of current node */
-        if (min_heap->array[right]->frequency < min_heap->array[smallest]->frequency) 
+        if (min_heap->array[right]->occurrence < min_heap->array[smallest]->occurrence) 
            smallest = right;
     }
 
@@ -107,7 +112,7 @@ void insertNode (min_heap_t* min_heap, min_heap_node_t* node) {
     int i = (min_heap->size)-1;
 
     /* while freq of new node is lower than freq of node at index (i-1)/2 */
-    while (i > 0 && node->frequency < min_heap->array[(i - 1) / 2]->frequency) {
+    while (i > 0 && node->occurrence < min_heap->array[(i - 1) / 2]->occurrence) {
         /* node in the middle of the array is replaced to the end of the array */
         min_heap->array[i] = min_heap->array[(i - 1) / 2];
         /* index is reset */
@@ -164,7 +169,7 @@ min_heap_node_t* buildHuffmanTree (data_t* linked_list) {
         /* create an internal node with frequency equal to the sum of
          * the frequencies of the left and right child, furthermore
          * make it parent of left and right node */
-        top = createNode('$', (*left).frequency + (*right).frequency);
+        top = createNode('$', (*left).occurrence + (*right).occurrence);
         top->left = left;
         top->right = right;
 
@@ -176,47 +181,115 @@ min_heap_node_t* buildHuffmanTree (data_t* linked_list) {
     return extractMin(min_heap);
 }
 
-void createCode (data_t* linked_list, min_heap_node_t* node, 
-	int* code, int current_node) {
+void createCode (char file_name[], min_heap_node_t* node, int* code, int current_node) {
     if (node->left) {
         /* assign 0 to the left node */
         code[current_node] = 0;
-        createCode(linked_list, node->left, code, (current_node+1));
+        createCode(file_name, node->left, code, (current_node+1));
     }
 
     if (node->right) {
         /* assign 1 to the right node */
         code[current_node] = 1;
-        createCode(linked_list, node->right, code, (current_node+1));
+        createCode(file_name, node->right, code, (current_node+1));
     }    
 
     if (node->left == NULL && node->right == NULL) {
-    	data_t* ptr = linked_list;
-    	while (ptr->character != node->data) {
-    		ptr = ptr->next;
-    	}
+        /* open the file to store the <character, code> pairs in */
+        FILE* fptr = fopen(file_name, "a");
 
-    	ptr->code = code;
-
-        printf("%c: ", ptr->character); 
+        /* store the current <character, code> pair into the file */
+        fprintf(fptr, "%c : ", node->character); 
         int i;
         for(i = 0; i < current_node; i++) {
-            printf("%d", ptr->code[i]);
+            fprintf(fptr, "%d", code[i]); 
         }
-        printf("\n");
+        fprintf(fptr, "\n");
+
+        fclose(fptr);
     }
 }
 
-void HuffmanCompression(data_t* linked_list) {
-    min_heap_node_t* root = buildHuffmanTree(linked_list);
+data_t* countOccurrences(char file_name[]) {
+    /* pointers for the linked list */
+    data_t* ptr = NULL;
+    data_t* prev_ptr = NULL;
+    data_t* head = NULL;
 
-    int* code = (int*) malloc(128 * sizeof(int));
-    int current_node = 0;
+    char first_datapoint = 1;
+    char add_new_datapoint;
 
-    createCode(linked_list, root, code, current_node);
+    /* create new data point */
+    ptr = (data_t*) malloc(sizeof(data_t));
+    /*ptr->code = " ";*/
+    ptr->next = NULL;
+    /* store pointer pointing to the top of the linked list */
+    head = ptr;
+
+    /* open text file to read from */
+    FILE *fptr = fopen(file_name, "r");
+
+    /* variable to store characters read from the file */
+    char character;
+
+    if (fptr == NULL) {
+        printf("Error reading the file!\n");
+    } else {
+        /* read the line from the file */
+        while ((fscanf(fptr, "%c", &character)) != EOF) {
+            add_new_datapoint = 1;
+
+            
+            if(character == '\n') {
+                /* save the newline (\n) by using special character ^ (caret) */
+                character = '^';
+            } else if (character == ' ') {
+                /* save the whitespace by using special character * (asterisk) */
+                character = '*';
+            }
+
+            /* check if data point for the current character already exists */
+            data_t* aux_ptr = head;
+            while (aux_ptr != NULL) {
+                /* if so, increment occurrence of the character */
+                if (aux_ptr->character == character) {
+                    aux_ptr->occurrence++;
+                    add_new_datapoint = 0;
+                    break;
+                }
+
+                aux_ptr = aux_ptr->next;
+            }
+
+            /* if no data point for the current character exists */
+            if (add_new_datapoint) {
+                if (first_datapoint) {
+                    /* don't need to allocate new memory for first data point */
+                    first_datapoint = 0;
+                } else {
+                    ptr = (data_t*) malloc(sizeof(data_t));
+                    prev_ptr->next = ptr;
+                }
+
+                prev_ptr = ptr;
+                ptr->character = character;
+                /* obviously the character occurs at least once if a new 
+                 * data point is needed */
+                ptr->occurrence = 1;
+                /*ptr->code = " ";*/
+                ptr->next = NULL; 
+            }           
+        }
+    }
+
+    /* close the text file after reading its content */
+    fclose(fptr);
+
+    return head;
 }
 
-data_t* loadLinkedList(char file_name[]) {
+data_t* loadCode(char file_name[]) {
+    /* open the file to read the <character, code> pairs from */
     FILE* fptr = fopen(file_name, "r");
 
     data_t* linked_list = NULL;
@@ -225,13 +298,15 @@ data_t* loadLinkedList(char file_name[]) {
         printf("Error reading the file!\n");
     } else {
         char character;
-        int occurrence;
+        char code[MAX_CODE_SIZE];
 
         data_t* ptr = NULL;
         data_t* prev_ptr = NULL;
         char first_datapoint = 1;
 
-        while (fscanf(fptr, "%c%d", &character, &occurrence) != EOF) {
+        /* while the end of file (EOF) is not reached */
+        while (fscanf(fptr, "%c : %s\n", &character, code) != EOF) {
+            /* create a data point for each <character, code> pair in the file */
             ptr = (data_t*) malloc(sizeof(data_t));
 
             if (first_datapoint) {
@@ -242,8 +317,15 @@ data_t* loadLinkedList(char file_name[]) {
             }
 
             prev_ptr = ptr;
+            /* store the character */
             ptr->character = character;
-            ptr->occurrence = occurrence;
+            ptr->occurrence = 0;
+            /* store the code */
+            int i;
+            for (i = 0; i < strlen(code); i++) {
+                ptr->code[i] = code[i];
+            }
+            ptr->code[strlen(code)+1] = '\0';
             ptr->next = NULL;
         } 
 
@@ -265,4 +347,73 @@ int getSize(data_t* linked_list) {
     return size;
 }
 
+void compressText(char file_name[], data_t* linked_list){
+    /* open the file you want to compress in order to read its content */
+    FILE *fptr_read = fopen(file_name, "r");
+    /* open the file in which the compressed text will be stored */
+    FILE *fptr_wrte = fopen(COMPR_TEXT, "w");
+
+    if (fptr_read == NULL) {
+        printf("Error reading the file! Hehe\n");
+    } else {
+
+        /* read the text file character by character and transform the plain text
+         * into the compressed text */
+        char character;
+        while (fscanf(fptr_read, "%c", &character) != EOF) {
+            if(character == '\n') {
+                /* save the newline (\n) by using special character ^ (caret) */
+                character = '^';
+            } else if (character == ' ') {
+                /* save the whitespace by using special character * (asterisk) */
+                character = '*';
+            }
+
+            /* look for the current character in the linked list containing all the
+             * <character, code> pairs */
+            data_t* ptr = linked_list;
+            while (ptr->character != character) {
+                ptr = ptr->next;
+            }
+
+            /* write the corresponding code of the character into the text file */
+            fprintf(fptr_wrte, "%s", ptr->code);
+        } 
+
+    }
+
+    /* close the text file after writing into it */
+    fclose(fptr_wrte);
+    /* close the text file after reading its content */
+    fclose(fptr_read); 
+}
+
+void HuffmanCompression(char file_name[]) {
+    /* read the text file and determine the occurrences of each character existing
+     * in the file */
+    data_t* linked_list = countOccurrences(file_name);
+
+    /* build a huffman tree given the <character, occurrence> pairs */
+    min_heap_node_t* root = buildHuffmanTree(linked_list);
+
+    /* make sure that the file storing the huffman code is empty beforehand */
+    FILE* fptr = fopen(CODE_FILE, "w");
+    fclose(fptr);
+
+    /* create variables required by the following function */
+    int* code = (int*) malloc(MAX_CODE_SIZE * sizeof(int));
+    int current_node = 0;
+
+    /* create the huffman code and store the <character, code> pairs in a 
+     * seperate text file */
+    createCode(CODE_FILE, root, code, current_node);
+
+    /* AUXILIARY FUNCTION: required to transform the code from integer to string
+     * read the text file containing the <character, code> pairs and load the 
+     * pairs into a linked list */
+    linked_list = loadCode(CODE_FILE);
+
+    /* given the linked list, compress the text tile */
+    compressText(file_name, linked_list);
+}
 

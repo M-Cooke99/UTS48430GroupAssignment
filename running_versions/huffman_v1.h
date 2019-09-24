@@ -6,6 +6,7 @@
  * LIBRARIES 
  **********************************************************************************/
 #include <stdlib.h>
+/*#include "count.h"*/
 
 
 /***********************************************************************************
@@ -15,6 +16,8 @@
 #define COMPR_TEXT		"compressed.txt"
 #define DECOMPR_TEXT	"decompressed.txt"
 #define CODE_FILE       "code.txt"
+
+#define CODE_SIZE		128
 
 
 /***********************************************************************************
@@ -36,13 +39,6 @@ struct min_heap {
     min_heap_node_t** array; /* array of min_heap_node pointers */
 };
 typedef struct min_heap min_heap_t;
-
-/* a line read from the input textfile */
-/*struct input_string {
-    char* str;
-    int str_length;
-};
-typedef struct input_string input_string_t;*/
 
 /* a datapoint */
 struct data {
@@ -91,12 +87,6 @@ void createCode (data_t* linked_list, min_heap_node_t* node,
 
 /* apply the huffman coding on data */
 void HuffmanCompression(data_t* linked_list);
-
-/* count occurrences of all characters existent in the file */
-/*data_t* countOccurrences(char file_name[]);*/
-
-/* save the linked list which contains all characters and their frequencies */
-/*void saveLinkedList(data_t* linked_list);*/
 
 /* load the linked list which contains all characters and their frequencies */
 data_t* loadLinkedList(char file_name[]);

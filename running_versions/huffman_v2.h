@@ -5,19 +5,18 @@
 /***********************************************************************************
  * LIBRARIES 
  **********************************************************************************/
-#include <stdlib.h> /* malloc */
-#include <string.h> /* strlen */
+#include <stdlib.h>
+#include "count.h"
 
 
 /***********************************************************************************
  * HASH DEFINES 
  **********************************************************************************/
 #define PLAIN_TEXT		"input.txt"
-#define CODE_FILE		"code.txt"
-#define COMPR_TEXT      "compressed.txt"
+#define COMPR_TEXT		"compressed.txt"
 #define DECOMPR_TEXT	"decompressed.txt"
 
-#define MAX_CODE_SIZE	32
+#define CODE_SIZE		128
 
 
 /***********************************************************************************
@@ -25,36 +24,27 @@
  **********************************************************************************/
 /* a node of the huffman tree */
 struct min_heap_node {
-    char character; 
-    int occurrence;                /* occurrence of the character in the text file */
-    struct min_heap_node *left;    /* left child node */
-    struct min_heap_node *right;   /* right child node */
+    char data; 
+    int frequency; /* occurance of the data in the input text */
+    struct min_heap_node *left;     /* left child node */
+    struct min_heap_node *right;    /* right child node */
 };
 typedef struct min_heap_node min_heap_node_t;
 
 /* huffman tree */
 struct min_heap {
-    int size;                   /* current size */
-    int capacity;               /* maximum size */
-    min_heap_node_t** array;    /* array of min_heap_node pointers */
+    int size;       /* current size */
+    int capacity;   /* maximum size */
+    min_heap_node_t** array; /* array of min_heap_node pointers */
 };
 typedef struct min_heap min_heap_t;
-
-/* a datapoint */
-struct data {
-    char character;
-    int occurrence;             /* occurrence of the character in the text file */
-    char code[MAX_CODE_SIZE];   /* huffman code corresponding to the character */
-    struct data* next;
-};
-typedef struct data data_t;
 
 
 /***********************************************************************************
  * FUNCTION PROTOTYPES 
  **********************************************************************************/
 /* create a node for a given character */
-min_heap_node_t* createNode (char character, int occurrence);
+min_heap_node_t* createNode (char data, int frequency);
 
 /* create a min heap */
 min_heap_t* createMinHeap (int capacity);
@@ -82,22 +72,11 @@ min_heap_t* createAndBuildMinHeap (data_t* linked_list);
 min_heap_node_t* buildHuffmanTree (data_t* linked_list);
 
 /* assign the huffman code to the characters */
-void createCode (char file_name[], min_heap_node_t* node, int* code, int current_node);
+void createCode (data_t* linked_list, min_heap_node_t* node, 
+	int* code, int current_node);
 
-/* counts occurrences of each character appearing in a given text file */
-data_t* countOccurrences(char file_name[]);
-
-/* loads the <character : code> pair */
-data_t* loadCode(char file_name[]);
-
-/* determines the size of a linked list */
-int getSize(data_t* linked_list);
-
-/* compresses the plain text */
-void compressText(char file_name[], data_t* linked_list);
-
-/* THIS IS WHERE THE ACTION IS: apply the huffman coding on the text file */
-void HuffmanCompression(char file_name[]);
+/* apply the huffman coding on data */
+void HuffmanCompression(data_t* linked_list);
 
 
 #endif /* HUFFMAN_H */

@@ -1,11 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Werror
 LIBS = -lm
-DEPS = huffman.h
-SRC = huffman.c
-OBJ = $(SRC:.c=.o)
-EXE = huffman
-RM = rm -f
+DEPS = huffman.h count.h
 
 #create .o file 
 %.o: %.c $(DEPS)
@@ -13,13 +9,13 @@ RM = rm -f
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 #create executable file
-$(EXE) : $(OBJ)
+huffman: huffman.o
 	echo "Building $@"
-	$(CC) $(CFLAGS) -o $(EXE) $(OBJ) $(LIBS) 
+	$(CC) $(CFLAGS) -o huffman huffman.o $(LIBS) 
 
 #prevent 'make' from doing something with a file named clean
 .PHONY: clean
 
 clean: 
 	echo "Cleaning object files"
-	$(RM) $(EXE) ./*.o
+	rm -f ./*.o
