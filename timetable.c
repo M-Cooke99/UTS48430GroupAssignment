@@ -10,6 +10,7 @@
 #include "timetable.h" 
 
 #define COURSES_FILE "Courses_Info.txt"
+#define STUDENTS_FILE "Student_List.txt"
 #define SLOT_NUM 6
 
 /******************************************************************************
@@ -44,6 +45,13 @@ struct student
 	personal_t personalInfo;
 };
 typedef struct student student_t;
+
+struct studentNode
+{
+	student_t stu;
+	struct studentNode* nextp;
+};
+typedef struct studentNode studentNode_t;
 
 struct timeC
 {
@@ -83,7 +91,7 @@ void printStuTimetable(int stuNum);
 void printStuDetails(int stuNum);
 int adminMain(void);
 void printAdminMenu(int* choicep);
-void addStu(void);
+void addStu(studentNode_t** head);
 void removeStu(void);
 void editStu(void);
 void printStu(void);
@@ -91,8 +99,16 @@ void printCourse(void);
 void printClass(void);
 void printEnrollment();
 int loadCourse(course_t AllCourses[]);
+void getName(student_t* stu);
+void getNumber(student_t* stu);
+void getBirthday(student_t* stu);
+void getAddress(student_t* stu);
+void testPrint(studentNode_t* studentListp);
+int saveStudentList(studentNode_t* head);
+int loadStudentList(studentNode_t** head);
 /******************************************************************************
  * MAIN 
+ * Author: Victor
 ******************************************************************************/
 int main(int argc, char *argv[]) {
 	if (argc <= 1){
@@ -154,17 +170,37 @@ int checkStuNum(long stuNum){
 int studentMain(void){
 	int choice;
 	long stuNum;
+
+	studentNode_t* studentListp;
+	studentListp = NULL;
 	
+	/* addStu(&studentListp);
+	addStu(&studentListp); */
+
 	getStuNum(&stuNum);
 
 	do { printStuMenu(&choice);
         switch (choice){
             case 1: printStuTimetable(stuNum); break;
             case 2: printStuDetails(stuNum); break;
-            case 3: break;
+            case 3: saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 3);
 	return 0;
+}
+
+/******************************************************************************
+ * Merely a test print function in order to check the linked list
+ * Author: Victor
+ * IN: pointer to a student struct
+ * OUT: None
+******************************************************************************/
+void testPrint(studentNode_t* head){
+	studentNode_t* current = head;
+	while (current != NULL){
+		printf("%s\n", current->stu.name);
+		current = current->nextp;
+	}
 }
 
 /******************************************************************************
@@ -213,17 +249,19 @@ void printStuDetails(int stuNum){
 ******************************************************************************/
 int adminMain(void){
 	int choice;
+	studentNode_t* studentListp;
+	studentListp = NULL;
 	
 	do { printAdminMenu(&choice);
         switch (choice){
-            case 1: addStu(); break;
+            case 1: addStu(&studentListp); break;
             case 2: removeStu(); break;
             case 3: editStu(); break;
             case 4: printStu(); break;
 	    	case 5: printCourse(); break;
 	    	case 6: printClass(); break;
 	    	case 7: printEnrollment(); break;
-	    	case 8: break; /* for later: save edited information */
+	    	case 8: saveStudentList(studentListp); break; /* for later: save edited information */
             default: printf("Invalid choice\n");} 
     } while (choice != 8);
 	return 0;
@@ -251,13 +289,83 @@ void printAdminMenu(int* choicep){
 }
 
 /******************************************************************************
- * Add student function
- * Author:
- * IN: None
+ * Function to add students to the list of enrolled students.
+ * Author: Victor
+ * IN: pointer to a pointer to the first node in the linked list of students
  * OUT: None
 ******************************************************************************/
-void addStu(void){
-	
+void addStu(studentNode_t** head){
+	student_t new;
+	getName(&new);
+	getNumber(&new);
+	strncpy(new.password,"default",20);
+	getBirthday(&new);
+	getAddress(&new);
+
+	if (*head == NULL){
+		*head = (studentNode_t*) malloc(sizeof(studentNode_t));
+		(*head)->stu=new;
+		(*head)->nextp=NULL;
+	} else {
+		studentNode_t* current = *head;
+		while (current->nextp != NULL){
+			current = current->nextp;
+		}
+		current->nextp = (studentNode_t*) malloc(sizeof(studentNode_t));
+		current->nextp->stu = new;
+		current->nextp->nextp = NULL;
+	} 
+
+}
+
+/******************************************************************************
+ * Asks for name input and stores it in student struct
+ * Author: Victor
+ * IN: pointer to a student struct
+ * OUT: None
+******************************************************************************/
+void getName(student_t* stup){
+	printf("Enter student name> ");
+	scanf("%s", (*stup).name);
+}
+
+/******************************************************************************
+ * Asks for student number input and stores it in student struct
+ * !! Probably needs an intermediate check on validity !!
+ * Author: Victor
+ * IN: pointer to a student struct
+ * OUT: None
+******************************************************************************/
+void getNumber(student_t* stup){
+	printf("Enter student number> ");
+	scanf("%d",&(*stup).number);
+}
+
+/******************************************************************************
+ * Asks for student's birthday input and stores it in student struct
+ * !! Probably needs an intermediate check on validity !!
+ * Author: Victor
+ * IN: pointer to a student struct
+ * OUT: None
+******************************************************************************/
+void getBirthday(student_t* stup){
+	printf("Enter birthday consisting of day, month, year, seperated by spaces> ");
+	scanf("%d%d%d", &(*stup).personalInfo.birthday.day,
+		&(*stup).personalInfo.birthday.month,&(*stup).personalInfo.birthday.year);
+}
+
+/******************************************************************************
+ * Asks for student's address input and stores it in student struct
+ * Needs an intermediate check on validity ?
+ * Author: Victor
+ * IN: pointer to a student struct
+ * OUT: None
+******************************************************************************/
+void getAddress(student_t* stup){
+	printf("Enter address consisting of housenumber and streetname,"
+		" seperated by a space> ");
+	scanf("%d%s",&(*stup).personalInfo.address.houseNumber,
+		(*stup).personalInfo.address.streetName);
 }
 
 /******************************************************************************
@@ -369,4 +477,60 @@ int loadCourse(course_t AllCourses[])
     }
     
     return i;
+}
+
+/******************************************************************************
+ * Saves the the linked list of students to a txt file
+ * Author: Victor
+ * IN: pointer to the first node in the linked list of students
+ * OUT: 0 if succesfull, 1 if unsuccesfull
+******************************************************************************/
+int saveStudentList(studentNode_t* head){
+	FILE* fp = NULL;
+    fp = fopen(STUDENTS_FILE, "w");
+
+    if (fp == NULL){
+        printf("Write error\n");
+        return 1;
+    }
+
+    studentNode_t* current = head;
+
+    while (current != NULL){
+    	fwrite(&(current->stu),1,sizeof(current->stu),fp);
+    	current = current->nextp;
+    }
+
+    fclose(fp);
+
+    return 0;
+
+}
+
+/******************************************************************************
+ * Loads the linked list of students from a txt file
+ * !! NOT FUNCTIONING AT THIS STAGE !!
+ * Author: Victor
+ * IN: pointer to the pointer to the first node in the linked list of students
+ * OUT: 0 if succesfull, 1 if unsuccesfull
+******************************************************************************/
+int loadStudentList(studentNode_t** head){
+	FILE* fp = NULL;
+    fp = fopen(STUDENTS_FILE, "r");
+
+    if (fp == NULL){
+        printf("Read error\n");
+        return 1;
+    }
+
+    *head = (studentNode_t*) malloc(sizeof(studentNode_t));
+    studentNode_t* current = *head;
+
+    while (fread(&(current->stu), sizeof(current->stu), 1, fp)){
+    	current = current -> nextp;
+    }
+
+    fclose(fp);
+    return 0;
+
 }
