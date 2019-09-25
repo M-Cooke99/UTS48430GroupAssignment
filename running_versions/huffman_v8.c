@@ -209,12 +209,12 @@ void createCode (char file_name[], min_heap_node_t* node, int* code, int current
         FILE* fptr = fopen(file_name, "a");
 
         /* store the current <character, code> pair into the file */
-        fprintf(fptr, "< %c , ", node->character); 
+        fprintf(fptr, "%c : ", node->character); 
         int i;
         for(i = 0; i < current_node; i++) {
             fprintf(fptr, "%d", code[i]); 
         }
-        fprintf(fptr, " >\n");
+        fprintf(fptr, "\n");
 
         fclose(fptr);
     }
@@ -315,7 +315,7 @@ data_t* loadCode(char file_name[]) {
         char first_datapoint = 1;
 
         /* while the end of file (EOF) is not reached */
-        while (fscanf(fptr, "< %c , %s >\n", &character, code) != EOF) {
+        while (fscanf(fptr, "%c : %s\n", &character, code) != EOF) {
             /* create a data point for each <character, code> pair in the file */
             ptr = (data_t*) malloc(sizeof(data_t));
 
