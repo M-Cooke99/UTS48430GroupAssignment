@@ -12,10 +12,42 @@
 #define COURSES_FILE "Courses_Info.txt"
 #define STUDENTS_FILE "Student_List.txt"
 #define SLOT_NUM 6
+#define MAX_ENROLLMENT 4
+#define MAX_COURSES_AMT 20
 
 /******************************************************************************
  * STRUCTURES
 ******************************************************************************/
+
+
+struct timeC
+{
+	int hour, minute;
+	char day[4];
+};
+typedef struct timeC timeC_t;
+
+struct slot
+{
+	char type[4];
+	int group;
+	char lecturer[20];
+	int building, floor, room;
+	int StudentAMT;
+	timeC_t start;
+	timeC_t end;
+};
+typedef struct slot slot_t;
+
+struct course
+{
+	int code;
+	char name[20];
+	char lecturer[20];
+	slot_t slot_a[SLOT_NUM];
+};
+typedef struct course course_t;
+
 struct birthday
 {
 	int year, month, day;
@@ -37,12 +69,27 @@ struct personal
 };
 typedef struct personal personal_t;
 
+struct studentCourse
+{
+	int LecGrp, LabGrp, TutGrp;
+	course_t course;
+};
+typedef struct studentCourse studentCourse_t;
+
+struct timetable
+{
+	int coursesAMT;
+	studentCourse_t enrolledCRSE[MAX_ENROLLMENT];
+};
+typedef struct timetable timetable_t;
+
 struct student
 {
 	int number;
 	char name[20] ;
 	char password[20] ;
 	personal_t personalInfo;
+	timetable_t enrollments;
 };
 typedef struct student student_t;
 
@@ -52,33 +99,6 @@ struct studentNode
 	struct studentNode* nextp;
 };
 typedef struct studentNode studentNode_t;
-
-struct timeC
-{
-	int hour, minute;
-	char day[4];
-};
-typedef struct timeC timeC_t;
-
-struct slot
-{
-	char type[4];
-	int group;
-	char lecturer[20];
-	int building, floor, room;
-	timeC_t start;
-	timeC_t end;
-};
-typedef struct slot slot_t;
-
-struct course
-{
-	int code;
-	char name[20];
-	char lecturer[20];
-	slot_t slot_a[SLOT_NUM];
-};
-typedef struct course course_t;
 
 /******************************************************************************
  * FUNCTION PROTOTYPES
@@ -95,10 +115,15 @@ void addStu(studentNode_t** head);
 void removeStu(void);
 void editStu(void);
 void printStu(void);
-void printCourse(void);
-void printClass(void);
+void printCourse(course_t AllCourses[], int coursesAMT);
+int validCourseNum(int courseNum);
+int validClassName(char className[]);
+int validGroupNum(int groupNum);
+void chooseClass(int* courseNum, char classType[], int* group);
+int checkEnrollment(student_t stu, int courseNum, char classType[], int group);
+void printClass(studentNode_t* head);
 void printEnrollment();
-int loadCourse(course_t AllCourses[]);
+int loadCourse(course_t AllCourses[], int* CoursesAMT);
 void getName(student_t* stu);
 void getNumber(student_t* stu);
 void getBirthday(student_t* stu);
@@ -253,6 +278,8 @@ void printStuDetails(int stuNum){
 ******************************************************************************/
 int adminMain(void){
 	int choice;
+	course_t AllCourses[MAX_COURSES_AMT];
+	int CoursesAMT = 0;
 	studentNode_t* studentListp;
 	studentListp = NULL;
 
@@ -262,8 +289,8 @@ int adminMain(void){
             case 2: removeStu(); break;
             case 3: editStu(); break;
             case 4: printStu(); break;
-	    	case 5: printCourse(); break;
-	    	case 6: printClass(); break;
+	    	case 5: printCourse(AllCourses, CoursesAMT); break;
+	    	case 6: printClass(studentListp); break;
 	    	case 7: printEnrollment(); break;
 	    	case 8: saveStudentList(studentListp); break; /* for later: save edited information */
             default: printf("Invalid choice\n");} 
@@ -465,41 +492,224 @@ void printStu(void){
 
 /******************************************************************************
  * Prints all courses' lectures and tutorials with amount of students
- * Author:
- * IN: None
+ * Author: Quentin
+ * IN: The array in which the courses are stored, the amount of courses stored
  * OUT: None
 ******************************************************************************/
-void printCourse(void){
+void printCourse(course_t AllCourses[], int coursesAMT)
+{
+	int i, j;
+	for(i=0; i<coursesAMT; i++)
+	{
+		printf("%03d %-20s - Lecturer: %s\n",
+			AllCourses[i].code, AllCourses[i].name, 
+			AllCourses[i].lecturer);
+		for(j=0; j<SLOT_NUM; j++)
+		{
+			printf("%-3s%d amount of student enrolled: %d\n",
+				AllCourses[i].slot_a[j].type, 
+				AllCourses[i].slot_a[j].group,
+				AllCourses[i].slot_a[j].StudentAMT);
+		}
+	}
+}
+
+/******************************************************************************
+ * Check if a course number is valid 
+ * Author: Quentin
+ * IN: Course number
+ * OUT: 0 if valid, 1 if unvalid
+******************************************************************************/
+int validCourseNum(int courseNum)
+{
+	if(courseNum>=100 && courseNum<=200)
+	{
+		return 0;
+	}
+	return 1;
+}
+
+/******************************************************************************
+ * Check if a class is valid 
+ * Author: Quentin
+ * IN: class name
+ * OUT: 0 if valid, 1 if unvalid
+******************************************************************************/
+int validClassName(char className[])
+{
+	if(strcmp(className, "Lab") == 0 || strcmp(className, "Lec") == 0 || 
+		strcmp(className, "Tut") == 0)
+	{
+		return 0;
+	}
+	return 1;
+}
+
+/******************************************************************************
+ * Check if a group number is valid 
+ * Author: Quentin
+ * IN: group number
+ * OUT: 0 if valid, 1 if unvalid
+******************************************************************************/
+int validGroupNum(int groupNum)
+{
+	if(groupNum>=1 && groupNum<=2)
+	{
+		return 0;
+	}
+	return 1;
+}
+
+/******************************************************************************
+ * Asks the user to choose a class 
+ * Author: Quentin
+ * IN: a pointer to the number of a course, the class type as a string,
+ * a pointer to the group number
+ * OUT: None
+******************************************************************************/
+void chooseClass(int* courseNum, char classType[], int* group)
+{
+	*courseNum = 0;
+	*group = 0;
+	int validInput = 1;
+
+	while(validInput == 1)
+	{
+		printf("Enter the number of the course: ");
+		scanf("%d", courseNum);
+		if(validCourseNum(*courseNum)==1)
+		{
+			printf("Invalid input\n");
+		}
+		else
+		{
+			validInput = 0;
+		}
+	}
+	validInput = 1;
+	while(validInput == 1)
+	{
+		printf("Enter the class and the group seperated by a space "
+			"(Lab 1, Tut 2, Lec 1...): ");
+		scanf("%s %d", classType, group);
+		if(validClassName(classType)==1 || validGroupNum(*group)==1)
+		{
+			printf("Invalid input\n");
+		}
+		else
+		{
+			validInput = 0;
+		}
+	}
 	
+}
+
+/******************************************************************************
+ * Check if a student is enrolled in a particular class 
+ * Author: Quentin
+ * IN: the student, the class to check (number of the course, the class type
+ * and the group number) 
+ * OUT: 0 if enrolled, 1 if not
+******************************************************************************/
+int checkEnrollment(student_t stu, int courseNum, char classType[], int group)
+{
+	int i;
+	for(i=0; i < stu.enrollments.coursesAMT; i++)
+	{
+		if(stu.enrollments.enrolledCRSE[i].course.code == courseNum)
+		{
+			if(strcmp(classType, "Lab") == 0 && 
+				stu.enrollments.enrolledCRSE[i].LabGrp == group)
+			{
+				return 0;
+			}
+			else if(strcmp(classType, "Lec") == 0 && 
+				stu.enrollments.enrolledCRSE[i].LecGrp == group)
+			{
+				return 0;
+			}
+			else if(strcmp(classType, "Tut") == 0 && 
+				stu.enrollments.enrolledCRSE[i].TutGrp == group)
+			{
+				return 0;
+			}
+		}
+	}
+	
+	return 1;
 }
 
 /******************************************************************************
  * Prints the names and number of students enrolled in a given Lab/Lec/Tut 
  * Author:
- * IN: None
+ * IN: pointer to the first node in the linked list of students
  * OUT: None
 ******************************************************************************/
-void printClass(void){
-	
+void printClass(studentNode_t* head)
+{
+	int courseNum, group; 
+	char classType[4];
+	int newLine = 0;
+
+	chooseClass(&courseNum, classType, &group);
+
+	studentNode_t* current = head;
+
+    while (current != NULL)
+    {
+    	if(checkEnrollment(current->stu, courseNum, classType, group) == 0)
+    	{
+    		printf("%d %s\t", current->stu.number, current->stu.name);
+    		newLine++;
+    	}
+    	current = current->nextp;
+    	if(newLine == 4)
+    	{
+    		printf("\n");
+    		newLine = 0;
+    	}
+    }
 }
+
 
 /******************************************************************************
  * Prints the number of students enrolled and a list of their student numbers
- * Author:
- * IN: None
+ * Author: Quentin
+ * IN: pointer to the first node in the linked list of students
  * OUT: None
 ******************************************************************************/
-void printEnrollment(void){
-	
+void printEnrollment(studentNode_t* head)
+{
+	int newLine = 0;
+	int enrolledNum = 0;
+	studentNode_t* current = head;
+
+    while (current != NULL)
+    {
+    	if(current->stu.enrollments.coursesAMT > 0)
+    	{
+    		printf("%d\t", current->stu.number);
+    		newLine++;
+    		enrolledNum++;
+    	}
+    	current = current->nextp;
+    	if(newLine == 6)
+    	{
+    		printf("\n");
+    		newLine = 0;
+    	}
+    }
+    printf("\n%d students are enrolled in at least one course\n", enrolledNum);
 }
 
 /******************************************************************************
  * Load the informations of one course from the txt file
  * Author: Quentin
- * IN: the number of the course that we want to load
- * OUT: The number of courses loaded from the file returned as an int
+ * IN: the array where we are storing the courses, a pointer to the amount of
+ * courses in the array
+ * OUT: 0 if succesfull, 1 if unsuccesfull
 ******************************************************************************/
-int loadCourse(course_t AllCourses[])
+int loadCourse(course_t AllCourses[], int* CoursesAMT)
 {
 	int i, j;
 	char line[10];
@@ -519,7 +729,7 @@ int loadCourse(course_t AllCourses[])
             /*Scan of each course slot infos*/
             for(j=0; j < SLOT_NUM; j++)
             {
-            	fscanf(database, "%s%d: %s %2d:%2d to %s %2d:%2d - CB%2d.%2d.%3d - %s",
+            	fscanf(database, "%s %d: %s %2d:%2d to %s %2d:%2d - CB%2d.%2d.%3d - %s",
             		AllCourses[i].slot_a[j].type, &AllCourses[i].slot_a[j].group, 
             		AllCourses[i].slot_a[j].start.day, &AllCourses[i].slot_a[j].start.hour,
             		&AllCourses[i].slot_a[j].start.minute, AllCourses[i].slot_a[j].end.day, 
@@ -534,9 +744,11 @@ int loadCourse(course_t AllCourses[])
     else
     {
         printf("Read error\n");
+        return 1;
     }
     
-    return i;
+    *CoursesAMT = i;
+    return 0;
 }
 
 /******************************************************************************
