@@ -86,7 +86,8 @@ typedef struct timetable timetable_t;
 struct student
 {
 	int number;
-	char name[20] ;
+	char firstname[20];
+	char lastname[20];
 	char password[20] ;
 	personal_t personalInfo;
 	timetable_t enrollments;
@@ -103,18 +104,19 @@ typedef struct studentNode studentNode_t;
 /******************************************************************************
  * FUNCTION PROTOTYPES
 ******************************************************************************/
-void getStuNum(long* stuNump);
-int checkStuNum(long stuNum);
+student_t getStu(studentNode_t* head);
+int checkStuNum(int stuNum, studentNode_t* head, student_t* match);
+void correctPassword(student_t student);
 int studentMain(void);
 void printStuMenu(int* choicep);
-void printStuTimetable(int stuNum);
-void printStuDetails(int stuNum);
+void printStuTimetable(student_t student);
+void printStuDetails(student_t student);
 int adminMain(void);
 void printAdminMenu(int* choicep);
 void addStu(studentNode_t** head);
 void removeStu(void);
 void editStu(void);
-void printStu(void);
+void printStu(studentNode_t* head);
 void printCourse(course_t AllCourses[], int coursesAMT);
 int validCourseNum(int courseNum);
 int validClassName(char className[]);
@@ -158,36 +160,67 @@ int main(int argc, char *argv[]) {
 
 /******************************************************************************
  * Asks for the user to enter a student number until a valid one is entered
- * Should return student struct
- * Author: Michael
+ * Author: Michael, Victor
  * IN: The storage location to save the student number
- * OUT: None
+ * OUT: student corresponding to ID input
 ******************************************************************************/
-void getStuNum(long* stuNump){
-	/* Similar function getNumber used for addStu, can probably get rid of one */
-	do {printf ("Enter Student Number\n");
-		scanf ("%li",stuNump);
-		
-		if (checkStuNum(*stuNump) != 0)
-		{
-			printf("Student Number Invalid");	
-		}	
-		
-	}while (checkStuNum(*stuNump) != 0);
+student_t getStu(studentNode_t* head){
+	int stuNum;
+	student_t match;
 
+	do {printf ("Enter Student Number> ");
+		scanf ("%d", &stuNum);
+		
+		if (!checkStuNum(stuNum, head, &match))	{
+			printf("Student Number Invalid\n");	
+		}	
+	}while (!checkStuNum(stuNum, head, &match));
+
+	return match;
 }
 
 /******************************************************************************
- * Reads a student number and checks validity
- * input should be student struct
- * Should 
- * Author:
- * IN: None
- * OUT: 0 if successful
+ * Checks if student number exists in the list of students
+ * !! Has an error, not working exactly as intended. While-loop continues when
+ * when if statement is satisfied !!
+ * Author: Victor
+ * IN: student number, head of linked list and pointer to student_t
+ * OUT: 1 if successful, 0 if unsuccesful
 ******************************************************************************/
-int checkStuNum(long stuNum){ 
+int checkStuNum(int stuNum, studentNode_t* head, student_t* match){ 
+	studentNode_t* current = head;
+	while (current != NULL){
+		if (stuNum == current->stu.number) {
+			*match = current->stu;
+			printf("ID Match found!\n"); /* For debug purposes */
+			return 1;
+		}
+		printf("test\n");
+		current = current->nextp;
+	}
 	return 0;
 }
+
+/******************************************************************************
+ * Asks user for password and checks if the password is correct
+ * !! Needs to be added: if password is equal to "default", the user should be
+ * able to enter a new one !!
+ * Author: Victor
+ * IN: student for whom the password is to be asked and checked
+ * OUT: none
+******************************************************************************/
+void correctPassword(student_t student){
+	char pw[20];
+	do {printf ("Enter password> ");
+		scanf ("%s", pw);
+		if (strcmp(student.password, pw)!=0)
+		{
+			printf("Password incorrect!\n");	
+		}	
+	}while (strcmp(student.password, pw)!=0);
+	printf("Password correct!\n");
+}
+
 
 
 /******************************************************************************
@@ -198,38 +231,24 @@ int checkStuNum(long stuNum){
 ******************************************************************************/
 int studentMain(void){
 	int choice;
-	long stuNum;
 
 	studentNode_t* studentListp;
 	studentListp = NULL;
 	
-	/* addStu(&studentListp);
-	addStu(&studentListp); */
+	addStu(&studentListp);
+	/*addStu(&studentListp);*/
 
-	getStuNum(&stuNum);
+	student_t currentStu = getStu(studentListp);
+	/* correctPassword(currentStu); */
 
 	do { printStuMenu(&choice);
         switch (choice){
-            case 1: printStuTimetable(stuNum); break;
-            case 2: printStuDetails(stuNum); break;
+            case 1: printStuTimetable(currentStu); break;
+            case 2: printStuDetails(currentStu); break;
             case 3: saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 3);
 	return 0;
-}
-
-/******************************************************************************
- * Merely a test print function in order to check the linked list
- * Author: Victor
- * IN: pointer to a student struct
- * OUT: None
-******************************************************************************/
-void testPrint(studentNode_t* head){
-	studentNode_t* current = head;
-	while (current != NULL){
-		printf("%s\n", current->stu.name);
-		current = current->nextp;
-	}
 }
 
 /******************************************************************************
@@ -249,25 +268,29 @@ void printStuMenu(int* choicep){
 
 /******************************************************************************
  * Prints the students timetable, chronologically per line
- * Assume input to be student struct in which an array of ....
+ * Assume input to be student struct in which an array of timetable structs is
  * Author:
  * IN: Student number for the timetable to be printed
  * OUT: 
 ******************************************************************************/
-void printStuTimetable(int stuNum){
-	/* Wouldn't it be better to save a student's timetable in its struct? 
-	 		- Victor */
+void printStuTimetable(student_t student){
 }
 
 /******************************************************************************
  * Prints the students details
- * Assume student struct as input
- * Author:
- * IN: The student number for the details to be printed
+ * Author: Victor
+ * IN: The student for which the details need to be printed
  * OUT: None
 ******************************************************************************/
-void printStuDetails(int stuNum){
-	
+void printStuDetails(student_t student){
+	printf("\nName: %s, %s\nStudent ID: %8d\nBirthday: %02d/%02d/%4d\n"
+		"Address: %d %s\nPhone number: %10ld\n", student.lastname, 
+		student.firstname, student.number, student.personalInfo.birthday.day, 
+		student.personalInfo.birthday.month, 
+		student.personalInfo.birthday.year, 
+		student.personalInfo.address.houseNumber,
+		student.personalInfo.address.streetName,
+		student.personalInfo.phoneNum);
 }
 
 /******************************************************************************
@@ -288,11 +311,11 @@ int adminMain(void){
             case 1: addStu(&studentListp); break;
             case 2: removeStu(); break;
             case 3: editStu(); break;
-            case 4: printStu(); break;
+            case 4: printStu(studentListp); break;
 	    	case 5: printCourse(AllCourses, CoursesAMT); break;
 	    	case 6: printClass(studentListp); break;
 	    	case 7: printEnrollment(); break;
-	    	case 8: saveStudentList(studentListp); break; /* for later: save edited information */
+	    	case 8: saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 8);
 	return 0;
@@ -357,8 +380,8 @@ void addStu(studentNode_t** head){
  * OUT: None
 ******************************************************************************/
 void getName(student_t* stup){
-	printf("Enter student name> ");
-	scanf("%s", (*stup).name);
+	printf("Enter first and last name of student, seperated by a space> ");
+	scanf("%s%s", (*stup).firstname, (*stup).lastname);
 }
 
 /******************************************************************************
@@ -477,17 +500,14 @@ void editStu(void){
 
 /******************************************************************************
  * Prints a students details followed by their timetable
- * Will change depending on student main functions!
- * Author: Michael
- * IN: None
+ * Author: Michael, Victor
+ * IN: pointer to the first node of the student linked list
  * OUT: None
 ******************************************************************************/
-void printStu(void){
-	long stuNum;
-	getStuNum(&stuNum);
-	printStuDetails(stuNum);
-	printf("\n");
-	printStuTimetable(stuNum);
+void printStu(studentNode_t* head){
+	student_t student = getStu(head);
+	printStuDetails(student);
+	printStuTimetable(student);
 }
 
 /******************************************************************************
@@ -516,53 +536,38 @@ void printCourse(course_t AllCourses[], int coursesAMT)
 
 /******************************************************************************
  * Check if a course number is valid 
- * Author: Quentin
+ * Author: Quentin, Victor
  * IN: Course number
- * OUT: 0 if valid, 1 if unvalid
+ * OUT: 1 if valid, 0 if unvalid
 ******************************************************************************/
-int validCourseNum(int courseNum)
-{
-	if(courseNum>=100 && courseNum<=200)
-	{
-		return 0;
-	}
-	return 1;
+int validCourseNum(int courseNum){
+	return courseNum>=100 && courseNum<=200;
 }
 
 /******************************************************************************
  * Check if a class is valid 
- * Author: Quentin
+ * Author: Quentin, Victor
  * IN: class name
- * OUT: 0 if valid, 1 if unvalid
+ * OUT: 1 if valid, 0 if unvalid
 ******************************************************************************/
-int validClassName(char className[])
-{
-	if(strcmp(className, "Lab") == 0 || strcmp(className, "Lec") == 0 || 
-		strcmp(className, "Tut") == 0)
-	{
-		return 0;
-	}
-	return 1;
+int validClassName(char className[]){	
+	return strcmp(className, "Lab") == 0 || strcmp(className, "Lec") == 0 || 
+		strcmp(className, "Tut") == 0;
 }
 
 /******************************************************************************
  * Check if a group number is valid 
- * Author: Quentin
+ * Author: Quentin, Victor
  * IN: group number
- * OUT: 0 if valid, 1 if unvalid
+ * OUT: 1 if valid, 0 if unvalid
 ******************************************************************************/
-int validGroupNum(int groupNum)
-{
-	if(groupNum>=1 && groupNum<=2)
-	{
-		return 0;
-	}
-	return 1;
+int validGroupNum(int groupNum){
+	return groupNum>=1 && groupNum<=2;
 }
 
 /******************************************************************************
  * Asks the user to choose a class 
- * Author: Quentin
+ * Author: Quentin, Victor
  * IN: a pointer to the number of a course, the class type as a string,
  * a pointer to the group number
  * OUT: None
@@ -577,7 +582,7 @@ void chooseClass(int* courseNum, char classType[], int* group)
 	{
 		printf("Enter the number of the course: ");
 		scanf("%d", courseNum);
-		if(validCourseNum(*courseNum)==1)
+		if(!validCourseNum(*courseNum))
 		{
 			printf("Invalid input\n");
 		}
@@ -592,7 +597,7 @@ void chooseClass(int* courseNum, char classType[], int* group)
 		printf("Enter the class and the group seperated by a space "
 			"(Lab 1, Tut 2, Lec 1...): ");
 		scanf("%s %d", classType, group);
-		if(validClassName(classType)==1 || validGroupNum(*group)==1)
+		if(!validClassName(classType) || !validGroupNum(*group))
 		{
 			printf("Invalid input\n");
 		}
@@ -659,7 +664,7 @@ void printClass(studentNode_t* head)
     {
     	if(checkEnrollment(current->stu, courseNum, classType, group) == 0)
     	{
-    		printf("%d %s\t", current->stu.number, current->stu.name);
+    		printf("%d %s\t", current->stu.number, current->stu.lastname);
     		newLine++;
     	}
     	current = current->nextp;
@@ -769,9 +774,9 @@ int saveStudentList(studentNode_t* head){
     studentNode_t* current = head;
 
     while (current != NULL){
-    	fprintf(fp, "%8d %20s pw: %20s %2d/%2d/%4d %3d %20s %10ld\n",
-    		current->stu.number,current->stu.name,current->stu.password,
-    		current->stu.personalInfo.birthday.day,
+    	fprintf(fp, "%8d %20s %20s pw: %20s %02d/%02d/%4d %3d %20s %10ld\n",
+    		current->stu.number,current->stu.firstname, current->stu.lastname,
+    		current->stu.password, current->stu.personalInfo.birthday.day,
     		current->stu.personalInfo.birthday.month,
     		current->stu.personalInfo.birthday.year,
     		current->stu.personalInfo.address.houseNumber,
@@ -806,9 +811,9 @@ int loadStudentList(studentNode_t** head){
     studentNode_t* current = *head;
 
     while (!feof(fp)){
-    	fscanf(fp, "%8d %20s pw: %20s %2d/%2d/%4d %3d %20s %10ld\n",
-    		&current->stu.number,current->stu.name,current->stu.password,
-    		&current->stu.personalInfo.birthday.day,
+    	fscanf(fp, "%8d %20s %20s pw: %20s %02d/%02d/%4d %3d %20s %10ld\n",
+    		&current->stu.number,current->stu.firstname,current->stu.lastname,
+    		current->stu.password, &current->stu.personalInfo.birthday.day,
     		&current->stu.personalInfo.birthday.month,
     		&current->stu.personalInfo.birthday.year,
     		&current->stu.personalInfo.address.houseNumber,
