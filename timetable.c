@@ -124,6 +124,10 @@ int checkEnrollment(student_t stu, int courseNum, char classType[], int group);
 void printClass(studentNode_t* head);
 void printEnrollment();
 int loadCourse(course_t AllCourses[], int* CoursesAMT);
+int saveClasses(course_t AllCourses[], int CoursesAMT);
+int validLocation(int building, int floor, int room);
+int validTime(char day[], int hour, int minute);
+int addCourse(course_t AllCourses[], int* CoursesAMT);
 void getName(student_t* stu);
 void getNumber(student_t* stu);
 void getBirthday(student_t* stu);
@@ -272,7 +276,7 @@ void printStuDetails(int stuNum){
 
 /******************************************************************************
  * Admin main: menu options
- * Author: Michael, Victor
+ * Author: Michael, Victor, Quentin
  * IN: None
  * OUT: 0 if successful
 ******************************************************************************/
@@ -282,6 +286,7 @@ int adminMain(void){
 	int CoursesAMT = 0;
 	studentNode_t* studentListp;
 	studentListp = NULL;
+	loadCourse(AllCourses, &CoursesAMT);
 
 	do { printAdminMenu(&choice);
         switch (choice){
@@ -292,9 +297,10 @@ int adminMain(void){
 	    	case 5: printCourse(AllCourses, CoursesAMT); break;
 	    	case 6: printClass(studentListp); break;
 	    	case 7: printEnrollment(); break;
-	    	case 8: saveStudentList(studentListp); break; /* for later: save edited information */
+	    	case 8: addCourse(AllCourses, &CoursesAMT); break;
+	    	case 9: saveStudentList(studentListp); break; /* for later: save edited information */
             default: printf("Invalid choice\n");} 
-    } while (choice != 8);
+    } while (choice != 9);
 	return 0;
 }
 
@@ -314,8 +320,9 @@ void printAdminMenu(int* choicep){
     "5. Show Course Information\n"
     "6. Show Class information\n"
     "7. Show all enrolled students\n"
-    "8. Exit Program\n"
-    "Enter Choice (number between 1-8)> ");
+    "8. Add a course\n"
+    "9. Exit Program\n"
+    "Enter Choice (number between 1-9)> ");
     scanf("%d", choicep);
 }
 
@@ -501,7 +508,7 @@ void printCourse(course_t AllCourses[], int coursesAMT)
 	int i, j;
 	for(i=0; i<coursesAMT; i++)
 	{
-		printf("%03d %-20s - Lecturer: %s\n",
+		printf("%03d %s - Lecturer: %s\n",
 			AllCourses[i].code, AllCourses[i].name, 
 			AllCourses[i].lecturer);
 		for(j=0; j<SLOT_NUM; j++)
@@ -511,6 +518,7 @@ void printCourse(course_t AllCourses[], int coursesAMT)
 				AllCourses[i].slot_a[j].group,
 				AllCourses[i].slot_a[j].StudentAMT);
 		}
+		printf("\n");
 	}
 }
 
@@ -641,7 +649,7 @@ int checkEnrollment(student_t stu, int courseNum, char classType[], int group)
 
 /******************************************************************************
  * Prints the names and number of students enrolled in a given Lab/Lec/Tut 
- * Author:
+ * Author: Quentin
  * IN: pointer to the first node in the linked list of students
  * OUT: None
 ******************************************************************************/
@@ -703,7 +711,7 @@ void printEnrollment(studentNode_t* head)
 }
 
 /******************************************************************************
- * Load the informations of one course from the txt file
+ * Loads the informations of one course from the txt file
  * Author: Quentin
  * IN: the array where we are storing the courses, a pointer to the amount of
  * courses in the array
@@ -749,6 +757,212 @@ int loadCourse(course_t AllCourses[], int* CoursesAMT)
     
     *CoursesAMT = i;
     return 0;
+}
+
+/******************************************************************************
+ * Saves the classes to the file 
+ * Author: Quentin
+ * IN: the array where we are storing the courses, a pointer to the amount of
+ * courses in the array
+ * OUT: 0 if succesfull, 1 if unsuccesfull
+******************************************************************************/
+int saveClasses(course_t AllCourses[], int CoursesAMT)
+{
+	int i, j;
+	FILE* database = NULL;
+    database = fopen(COURSES_FILE, "w");
+
+    if (database != NULL)
+    {
+         
+        for(i=0; i < CoursesAMT; i++)
+        {
+        	fprintf(database, "\n ");
+        	/*Saves the course general infos*/
+            fprintf(database, "\n%d %s - Lecturer: %s",
+            	AllCourses[i].code, AllCourses[i].name, AllCourses[i].lecturer);
+
+            /*Saves each course slot infos*/
+            for(j=0; j < SLOT_NUM; j++)
+            {
+            	fprintf(database, "\n%s %d: %s %02d:%02d to %s %02d:%02d - CB%02d.%02d.%03d - %s",
+            		AllCourses[i].slot_a[j].type, AllCourses[i].slot_a[j].group, 
+            		AllCourses[i].slot_a[j].start.day, AllCourses[i].slot_a[j].start.hour,
+            		AllCourses[i].slot_a[j].start.minute, AllCourses[i].slot_a[j].end.day, 
+            		AllCourses[i].slot_a[j].end.hour, AllCourses[i].slot_a[j].end.minute,
+            		AllCourses[i].slot_a[j].building, AllCourses[i].slot_a[j].floor, 
+            		AllCourses[i].slot_a[j].room, AllCourses[i].slot_a[j].lecturer);	
+            }
+        }
+    }
+    else
+    {
+        printf("Write error\n");
+        return 1;
+    }
+
+    fclose(database);
+
+    return 0;
+}
+
+/******************************************************************************
+ * Check if a location is valid 
+ * Author: Quentin
+ * IN: building, floor, room
+ * OUT: 0 if valid, 1 if unvalid
+******************************************************************************/
+int validLocation(int building, int floor, int room)
+{
+	if(building >= 0 && building <= 20 && floor >= 0 && floor <= 30 && 
+		room >= 0 && room <= 600)
+	{
+		return 0;
+	}
+	return 1;
+}
+
+/******************************************************************************
+ * Checks if the time information put in is valid
+ * Author: Victor
+ * IN: stirng for day, integers for hour and minute
+ * OUT: 0 if valid, 1 if invalid
+******************************************************************************/
+int validTime(char day[], int hour, int minute)
+{
+	if((strcmp(day, "mon") == 0 || strcmp(day, "tue") == 0 || 
+		strcmp(day, "wed") == 0 || strcmp(day, "thu") == 0 || 
+		strcmp(day, "fri") == 0 || strcmp(day, "sat") == 0 ) &&
+		(hour >= 0 && hour <= 23) && (minute >= 0 && minute <= 59))
+	{
+		return 0;
+	}
+	return 1;
+}
+
+/******************************************************************************
+ * Add a course to the list then load it to the file
+ * Author: Quentin
+ * IN: the array where we are storing the courses, a pointer to the amount of
+ * courses in the array
+ * OUT: 0 if succesfull, 1 if unsuccesfull
+******************************************************************************/
+int addCourse(course_t AllCourses[], int* CoursesAMT)
+{
+	int validInput = 1;
+	int i;
+	int success = 1;
+
+	while(validInput == 1)
+	{
+		printf("Enter the number of the course: ");
+		scanf("%d", &AllCourses[*CoursesAMT].code);
+		if(validCourseNum(AllCourses[*CoursesAMT].code)==1)
+		{
+			printf("Invalid input\n");
+		}
+		else
+		{
+			validInput = 0;
+		}
+	}
+	validInput = 1;
+
+	printf("Enter the name of the course: ");
+	scanf("%s", AllCourses[*CoursesAMT].name);
+
+	printf("Enter the lecturer of the course (ex: Name_Surname): ");
+	scanf("%s", AllCourses[*CoursesAMT].lecturer);
+
+	for(i=0; i <= SLOT_NUM; i++)
+	{
+		printf("\nClass number %d\n", (i+1));
+		while(validInput == 1)
+		{
+			printf("Enter the class and the group seperated by a space "
+				"(Lab 1, Tut 2, Lec 1...): ");
+			scanf("%s %d", AllCourses[*CoursesAMT].slot_a[i].type, 
+				&AllCourses[*CoursesAMT].slot_a[i].group);
+			if(validClassName(AllCourses[*CoursesAMT].slot_a[i].type)==1
+				|| validGroupNum(AllCourses[*CoursesAMT].slot_a[i].group)==1)
+			{
+				printf("Invalid input\n");
+			}
+			else
+			{
+				validInput = 0;
+			}
+		}
+		validInput = 1;
+
+		printf("Enter the lecturer of the class (ex: Name_Surname): ");
+		scanf("%s", AllCourses[*CoursesAMT].slot_a[i].lecturer);
+
+		while(validInput == 1)
+		{
+			printf("Enter the building, floor and the room seperated by a space: ");
+			scanf("%d %d %d", &AllCourses[*CoursesAMT].slot_a[i].building,
+				&AllCourses[*CoursesAMT].slot_a[i].floor, 
+				&AllCourses[*CoursesAMT].slot_a[i].room);
+			if(validLocation(AllCourses[*CoursesAMT].slot_a[i].building,
+				AllCourses[*CoursesAMT].slot_a[i].floor, 
+				AllCourses[*CoursesAMT].slot_a[i].room) ==1 )
+			{
+				printf("Invalid input\n");
+			}
+			else
+			{
+				validInput = 0;
+			}
+		}
+		validInput = 1;
+
+		AllCourses[*CoursesAMT].slot_a[i].StudentAMT = 0;
+
+		while(validInput == 1)
+		{
+			printf("Enter the start time (ex format: mon 10:23): ");
+			scanf("%s %d:%d", AllCourses[*CoursesAMT].slot_a[i].start.day,
+				&AllCourses[*CoursesAMT].slot_a[i].start.hour, 
+				&AllCourses[*CoursesAMT].slot_a[i].start.minute);
+			if(validTime(AllCourses[*CoursesAMT].slot_a[i].start.day,
+				AllCourses[*CoursesAMT].slot_a[i].start.hour, 
+				AllCourses[*CoursesAMT].slot_a[i].start.minute) == 1)
+			{
+				printf("Invalid input\n");
+			}
+			else
+			{
+				validInput = 0;
+			}
+		}
+		validInput = 1;
+
+		while(validInput == 1)
+		{
+			printf("Enter the end time (ex format: mon 10:23): ");
+			scanf("%s %d:%d", AllCourses[*CoursesAMT].slot_a[i].end.day,
+				&AllCourses[*CoursesAMT].slot_a[i].end.hour, 
+				&AllCourses[*CoursesAMT].slot_a[i].end.minute);
+			if(validTime(AllCourses[*CoursesAMT].slot_a[i].end.day,
+				AllCourses[*CoursesAMT].slot_a[i].end.hour, 
+				AllCourses[*CoursesAMT].slot_a[i].end.minute) == 1)
+			{
+				printf("Invalid input\n");
+			}
+			else
+			{
+				validInput = 0;
+			}
+		}
+		validInput = 1;
+	}
+
+
+	(*CoursesAMT)++;
+
+	success = saveClasses(AllCourses, *CoursesAMT);
+	return success;
 }
 
 /******************************************************************************
