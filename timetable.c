@@ -830,6 +830,13 @@ int validLocation(int building, int floor, int room)
 	}
 	return 1;
 }
+/* These validXXX functions can be written much more efficiently like this.
+returns 1 if the statement is true, false 0.
+int validLocation(int building, int floor, int room) {
+	return building >= 0 && building <= 20 && floor >= 0 && floor <= 30 && 
+		room >= 0 && room <= 600;
+} 
+*/
 
 /******************************************************************************
  * Checks if the time information put in is valid
