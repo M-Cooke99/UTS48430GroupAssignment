@@ -320,12 +320,8 @@ int adminMain(void){
 	    	case 5: printCourse(AllCourses, CoursesAMT); break;
 	    	case 6: printClass(studentListp); break;
 	    	case 7: printEnrollment(); break;
-<<<<<<< HEAD
 	    	case 8: addCourse(AllCourses, &CoursesAMT); break;
 	    	case 9: saveStudentList(studentListp); break; /* for later: save edited information */
-=======
-	    	case 8: saveStudentList(studentListp); break;
->>>>>>> 569026bf70650a0122d9a2c831bb211193b09b06
             default: printf("Invalid choice\n");} 
     } while (choice != 9);
 	return 0;
