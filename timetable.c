@@ -106,7 +106,9 @@ typedef struct studentNode studentNode_t;
 ******************************************************************************/
 student_t getStu(studentNode_t* head);
 int checkStuNum(int stuNum, studentNode_t* head, student_t* match);
-void correctPassword(student_t student);
+void checkPassword(student_t stup);
+void setPassword(student_t* stup);
+int saveStudentChanges(studentNode_t* head, student_t stu);
 int studentMain(void);
 void printStuMenu(int* choicep);
 void printStuTimetable(student_t student);
@@ -115,7 +117,8 @@ int adminMain(void);
 void printAdminMenu(int* choicep);
 void addStu(studentNode_t** head);
 void removeStu(void);
-void editStu(void);
+int editStu(studentNode_t* head, student_t stu);
+void printEditMenu(int* choicep);
 void printStu(studentNode_t* head);
 void printCourse(course_t AllCourses[], int coursesAMT);
 int validCourseNum(int courseNum);
@@ -139,6 +142,7 @@ int saveStudentList(studentNode_t* head);
 int loadStudentList(studentNode_t** head);
 void getPhoneNumber(student_t* stup);
 int validStuNum(int number);
+int validPhoneNumber(long phoneNum);
 int validDate(int day, int month, int year);
 /******************************************************************************
  * MAIN 
@@ -174,10 +178,6 @@ student_t getStu(studentNode_t* head){
 
 	do {printf ("Enter Student Number> ");
 		scanf ("%d", &stuNum);
-		
-		if (!checkStuNum(stuNum, head, &match))	{
-			printf("Student Number Invalid\n");	
-		}	
 	}while (!checkStuNum(stuNum, head, &match));
 
 	return match;
@@ -185,8 +185,6 @@ student_t getStu(studentNode_t* head){
 
 /******************************************************************************
  * Checks if student number exists in the list of students
- * !! Has an error, not working exactly as intended. While-loop continues when
- * when if statement is satisfied !!
  * Author: Victor
  * IN: student number, head of linked list and pointer to student_t
  * OUT: 1 if successful, 0 if unsuccesful
@@ -196,36 +194,62 @@ int checkStuNum(int stuNum, studentNode_t* head, student_t* match){
 	while (current != NULL){
 		if (stuNum == current->stu.number) {
 			*match = current->stu;
-			printf("ID Match found!\n"); /* For debug purposes */
 			return 1;
 		}
-		printf("test\n");
 		current = current->nextp;
 	}
+	printf("Student Number Invalid\n");
 	return 0;
 }
 
 /******************************************************************************
  * Asks user for password and checks if the password is correct
- * !! Needs to be added: if password is equal to "default", the user should be
- * able to enter a new one !!
  * Author: Victor
  * IN: student for whom the password is to be asked and checked
  * OUT: none
 ******************************************************************************/
-void correctPassword(student_t student){
+void checkPassword(student_t student){
 	char pw[20];
 	do {printf ("Enter password> ");
-		scanf ("%s", pw);
-		if (strcmp(student.password, pw)!=0)
-		{
+		scanf ("%s", pw);	
+		if (strcmp(student.password, pw)!=0){
 			printf("Password incorrect!\n");	
 		}	
-	}while (strcmp(student.password, pw)!=0);
+	} while (strcmp(student.password, pw)!=0);
 	printf("Password correct!\n");
+} 
+
+/******************************************************************************
+ * Let's a student set its password
+ * Author: Victor
+ * IN: student for whom the password must be set
+ * OUT: none
+******************************************************************************/
+void setPassword(student_t* stup){
+	if (strcmp((*stup).password,"default")!=0){
+		checkPassword(*stup);
+	}
+	printf("Set a password> ");
+	scanf("%s", (*stup).password);
 }
 
-
+/******************************************************************************
+ * Ensures any changes made to a student is to be saved in the linked list
+ * Author: Victor
+ * IN: student for whom the password must be set
+ * OUT: none
+******************************************************************************/
+int saveStudentChanges(studentNode_t* head, student_t stu){
+	studentNode_t* current = head;
+	while (current != NULL){
+		if (stu.number == current->stu.number){
+			current->stu = stu;
+			return 1;
+		}
+	current = current->nextp;
+	}
+	return 0;
+}
 
 /******************************************************************************
  * Student main: menu options
@@ -235,23 +259,36 @@ void correctPassword(student_t student){
 ******************************************************************************/
 int studentMain(void){
 	int choice;
-
 	studentNode_t* studentListp;
 	studentListp = NULL;
-	
-	addStu(&studentListp);
-	/*addStu(&studentListp);*/
+
+	loadStudentList(&studentListp); 
+
+	/* Makes login easier during programming */
+	studentNode_t* current = studentListp;
+	while (current != NULL){
+		printf("ID: %d PW: %s\n", current->stu.number, current->stu.password);
+		current = current->nextp;
+	}
 
 	student_t currentStu = getStu(studentListp);
-	/* correctPassword(currentStu); */
+
+	if (strcmp(currentStu.password, "default") == 0){
+		setPassword(&currentStu);
+		saveStudentChanges(studentListp,currentStu);
+	} else {
+		checkPassword(currentStu);
+	}
 
 	do { printStuMenu(&choice);
         switch (choice){
             case 1: printStuTimetable(currentStu); break;
             case 2: printStuDetails(currentStu); break;
-            case 3: saveStudentList(studentListp); break;
+            case 3: editStu(studentListp, currentStu); 
+            		checkStuNum(currentStu.number,studentListp,&currentStu); break;
+            case 4: saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
-    } while (choice != 3);
+    } while (choice != 4);
 	return 0;
 }
 
@@ -265,8 +302,9 @@ void printStuMenu(int* choicep){
 	printf("\n"
     "1. View Timetable\n"
     "2. View Personal Details\n"
-    "3. Exit Program\n"
-    "Enter Choice (number between 1-3)> ");
+    "3. Edit Personal Details\n"
+    "4. Exit Program\n"
+    "Enter Choice (number between 1-4)> ");
     scanf("%d", choicep);
 }
 
@@ -288,7 +326,7 @@ void printStuTimetable(student_t student){
 ******************************************************************************/
 void printStuDetails(student_t student){
 	printf("\nName: %s, %s\nStudent ID: %8d\nBirthday: %02d/%02d/%4d\n"
-		"Address: %d %s\nPhone number: %10ld\n", student.lastname, 
+		"Address: %d %s\nPhone number: %010ld\n", student.lastname, 
 		student.firstname, student.number, student.personalInfo.birthday.day, 
 		student.personalInfo.birthday.month, 
 		student.personalInfo.birthday.year, 
@@ -310,18 +348,19 @@ int adminMain(void){
 	studentNode_t* studentListp;
 	studentListp = NULL;
 	loadCourse(AllCourses, &CoursesAMT);
+	loadStudentList(&studentListp);
 
 	do { printAdminMenu(&choice);
         switch (choice){
             case 1: addStu(&studentListp); break;
             case 2: removeStu(); break;
-            case 3: editStu(); break;
+            case 3: editStu(studentListp, getStu(studentListp)); break;
             case 4: printStu(studentListp); break;
 	    	case 5: printCourse(AllCourses, CoursesAMT); break;
 	    	case 6: printClass(studentListp); break;
-	    	case 7: printEnrollment(); break;
+	    	case 7: printEnrollment(studentListp); break;
 	    	case 8: addCourse(AllCourses, &CoursesAMT); break;
-	    	case 9: saveStudentList(studentListp); break; /* for later: save edited information */
+	    	case 9: saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 9);
 	return 0;
@@ -414,7 +453,6 @@ void getNumber(student_t* stup){
 
 /******************************************************************************
  * Checks if student number input is valid
- * -> 8 digit student ID is what we want right?
  * Author: Victor
  * IN: integer of the student number
  * OUT: 1 if valid, 0 if invalid
@@ -432,8 +470,7 @@ int validStuNum(int number){
 void getBirthday(student_t* stup){
 	int day, month, year;
 
-	do {
-		printf("Enter birthday consisting of day, month, year,"
+	do {printf("Enter birthday consisting of day, month, year,"
 			" seperated by spaces> ");
 		scanf("%d%d%d", &day, &month, &year);
 
@@ -481,8 +518,28 @@ void getAddress(student_t* stup){
  * OUT: None
 ******************************************************************************/
 void getPhoneNumber(student_t* stup){
-	printf("Enter phone number> ");
-	scanf("%ld",&(*stup).personalInfo.phoneNum);
+	long phoneNum;
+
+	do {printf("Enter phone number> ");
+		scanf("%ld",&phoneNum);
+
+		if(!validPhoneNumber(phoneNum)){
+			printf("Invalid phone number.\n");
+		}
+
+	} while (!validPhoneNumber(phoneNum));
+
+	(*stup).personalInfo.phoneNum = phoneNum;
+}
+
+/******************************************************************************
+ * Checks if student phone number input is valid
+ * Author: Victor
+ * IN: integer containing the phone number
+ * OUT: 1 if valid, 0 if invalid
+******************************************************************************/
+int validPhoneNumber(long phoneNum){
+	return phoneNum >= 100000000 && phoneNum <= 999999999;
 }
 
 /******************************************************************************
@@ -497,12 +554,42 @@ void removeStu(void){
 
 /******************************************************************************
  * Edit student details function
- * Author:
- * IN: None
+ * Author: Victor
+ * IN: pointer to the first node in the student list, student to be edited
+ * OUT: 0 if succesfull
+******************************************************************************/
+int editStu(studentNode_t* head, student_t stu){
+	int choice;
+
+	do { printEditMenu(&choice);
+        switch (choice){
+            case 1: getName(&stu); break;
+            case 2: getBirthday(&stu); break;
+            case 3: getAddress(&stu); break;
+            case 4: getPhoneNumber(&stu); break;
+            case 5: setPassword(&stu); break;
+	    	case 6: saveStudentChanges(head,stu); break;
+            default: printf("Invalid choice\n");} 
+    } while (choice != 6);
+	return 0;
+}
+
+/******************************************************************************
+ * Prints the student edit menu
+ * Author: Victor
+ * IN: pointer to an integer choice variable
  * OUT: None
 ******************************************************************************/
-void editStu(void){
-	
+void printEditMenu(int* choicep){
+	printf("\nWhich information would you like to change?\n"
+    "1. Name\n"
+    "2. Birthday\n"
+    "3. Address\n"
+    "4. Phone Number\n"
+    "5. Set Password\n"
+    "6. Exit Menu\n"
+    "Enter Choice (number between 1-6)> ");
+    scanf("%d", choicep);
 }
 
 /******************************************************************************
@@ -979,6 +1066,7 @@ int addCourse(course_t AllCourses[], int* CoursesAMT)
 
 /******************************************************************************
  * Saves the the linked list of students to a txt file
+ * !! Currently does not save timetables !!
  * Author: Victor
  * IN: pointer to the first node in the linked list of students
  * OUT: 0 if succesfull, 1 if unsuccesfull
@@ -995,7 +1083,7 @@ int saveStudentList(studentNode_t* head){
     studentNode_t* current = head;
 
     while (current != NULL){
-    	fprintf(fp, "%8d %20s %20s pw: %20s %02d/%02d/%4d %3d %20s %10ld\n",
+    	fprintf(fp, "\n \n%8d %s %s pw: %s %02d/%02d/%4d %d %s %10ld",
     		current->stu.number,current->stu.firstname, current->stu.lastname,
     		current->stu.password, current->stu.personalInfo.birthday.day,
     		current->stu.personalInfo.birthday.month,
@@ -1014,14 +1102,14 @@ int saveStudentList(studentNode_t* head){
 
 /******************************************************************************
  * Loads the linked list of students from a txt file
- * !! Currently compiles but has segmentation fault !!
  * Author: Victor
  * IN: pointer to the pointer to the first node in the linked list of students
  * OUT: 0 if succesfull, 1 if unsuccesfull
 ******************************************************************************/
 int loadStudentList(studentNode_t** head){
-	FILE* fp = NULL;
+	FILE* fp = NULL; char line[10];
     fp = fopen(STUDENTS_FILE, "r");
+    char firstdatapoint = 1;
 
     if (fp == NULL){
         printf("Read error\n");
@@ -1030,17 +1118,25 @@ int loadStudentList(studentNode_t** head){
 
     *head = (studentNode_t*) malloc(sizeof(studentNode_t));
     studentNode_t* current = *head;
+    studentNode_t* previous = NULL;
 
-    while (!feof(fp)){
-    	fscanf(fp, "%8d %20s %20s pw: %20s %02d/%02d/%4d %3d %20s %10ld\n",
-    		&current->stu.number,current->stu.firstname,current->stu.lastname,
-    		current->stu.password, &current->stu.personalInfo.birthday.day,
-    		&current->stu.personalInfo.birthday.month,
-    		&current->stu.personalInfo.birthday.year,
-    		&current->stu.personalInfo.address.houseNumber,
+    while(fgets(line, 10, fp) != NULL){
+    	if (firstdatapoint){
+    		firstdatapoint = 0;
+    	} else {
+  			current = (studentNode_t*) malloc(sizeof(studentNode_t));
+  			previous->nextp = current;
+    	}
+    	fscanf(fp, "%d %s %s pw: %s %d/%d/%d %d %s %10ld",
+    		&(current->stu.number),current->stu.firstname,current->stu.lastname,
+    		current->stu.password, &(current->stu.personalInfo.birthday.day),
+    		&(current->stu.personalInfo.birthday.month),
+    		&(current->stu.personalInfo.birthday.year),
+    		&(current->stu.personalInfo.address.houseNumber),
     		current->stu.personalInfo.address.streetName,
-    		&current->stu.personalInfo.phoneNum);
-    	current = current->nextp;
+    		&(current->stu.personalInfo.phoneNum));
+    	current->nextp = NULL;
+    	previous = current;
     }
 
     fclose(fp);
