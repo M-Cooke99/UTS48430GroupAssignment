@@ -116,7 +116,7 @@ void printStuDetails(student_t student);
 int adminMain(void);
 void printAdminMenu(int* choicep);
 void addStu(studentNode_t** head);
-void removeStu(void);
+int removeStu(studentNode_t** head);
 int editStu(studentNode_t* head, student_t stu);
 void printEditMenu(int* choicep);
 void printStu(studentNode_t* head);
@@ -353,7 +353,7 @@ int adminMain(void){
 	do { printAdminMenu(&choice);
         switch (choice){
             case 1: addStu(&studentListp); break;
-            case 2: removeStu(); break;
+            case 2: removeStu(&studentListp); break;
             case 3: editStu(studentListp, getStu(studentListp)); break;
             case 4: printStu(studentListp); break;
 	    	case 5: printCourse(AllCourses, CoursesAMT); break;
@@ -543,20 +543,44 @@ int validPhoneNumber(long phoneNum){
 }
 
 /******************************************************************************
- * Remove student function
- * Author:
- * IN: None
- * OUT: None
+ * Removes student from the student linked list
+ * Author: Victor
+ * IN: Pointer to the pointer of the first node in the list of students
+ * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
-void removeStu(void){
-	
+int removeStu(studentNode_t** head){
+	student_t stu = getStu(*head);
+	studentNode_t* current = *head;
+	studentNode_t* previous = NULL;
+	studentNode_t* next_node = NULL;
+
+	while (current!=NULL){
+		if (stu.number == current->stu.number){
+			if (previous == NULL){
+				next_node = (*head)->nextp;
+				free(*head);
+				*head = next_node;
+				return 0;
+			} else if (current->nextp==NULL){
+				free(current->nextp);
+				previous->nextp=NULL;
+			}
+			next_node = current->nextp;
+			free(current);
+			previous->nextp = next_node;
+			return 0;
+		}
+		previous = current;
+		current = current->nextp;
+	}
+	return 1;
 }
 
 /******************************************************************************
  * Edit student details function
  * Author: Victor
  * IN: pointer to the first node in the student list, student to be edited
- * OUT: 0 if succesfull
+ * OUT: 0 if successful
 ******************************************************************************/
 int editStu(studentNode_t* head, student_t stu){
 	int choice;
@@ -807,7 +831,7 @@ void printEnrollment(studentNode_t* head)
  * Author: Quentin
  * IN: the array where we are storing the courses, a pointer to the amount of
  * courses in the array
- * OUT: 0 if succesfull, 1 if unsuccesfull
+ * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int loadCourse(course_t AllCourses[], int* CoursesAMT)
 {
@@ -856,7 +880,7 @@ int loadCourse(course_t AllCourses[], int* CoursesAMT)
  * Author: Quentin
  * IN: the array where we are storing the courses, a pointer to the amount of
  * courses in the array
- * OUT: 0 if succesfull, 1 if unsuccesfull
+ * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int saveClasses(course_t AllCourses[], int CoursesAMT)
 {
@@ -944,7 +968,7 @@ int validTime(char day[], int hour, int minute)
  * Author: Quentin
  * IN: the array where we are storing the courses, a pointer to the amount of
  * courses in the array
- * OUT: 0 if succesfull, 1 if unsuccesfull
+ * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int addCourse(course_t AllCourses[], int* CoursesAMT)
 {
@@ -1069,7 +1093,7 @@ int addCourse(course_t AllCourses[], int* CoursesAMT)
  * !! Currently does not save timetables !!
  * Author: Victor
  * IN: pointer to the first node in the linked list of students
- * OUT: 0 if succesfull, 1 if unsuccesfull
+ * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int saveStudentList(studentNode_t* head){
 	FILE* fp = NULL;
@@ -1104,7 +1128,7 @@ int saveStudentList(studentNode_t* head){
  * Loads the linked list of students from a txt file
  * Author: Victor
  * IN: pointer to the pointer to the first node in the linked list of students
- * OUT: 0 if succesfull, 1 if unsuccesfull
+ * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int loadStudentList(studentNode_t** head){
 	FILE* fp = NULL; char line[10];
