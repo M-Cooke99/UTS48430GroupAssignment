@@ -1201,7 +1201,7 @@ int FindCourse(int courseNum, course_t* theCourse, course_t AllCourses[],
 }
 
 /******************************************************************************
- * Enroll a student to a course (and classes)
+ * Enroll a student to a classe
  * Author: Quentin
  * IN: the course we want to add, the student, a pointer to the first node in 
  * the linked list of students, the array of courses, the amount of courses in 
@@ -1243,8 +1243,7 @@ int EnrollStudent(int courseNum, int stdNum, studentNode_t* head,
 	    	
             	default: 
             		break;
-            } 
-			std.enrollments.coursesAMT = 1;
+            }
 			return 0;
 		}
 	}
@@ -1271,10 +1270,9 @@ void AddEnrolledCourse(course_t theCourse, student_t* std)
 ******************************************************************************/
 int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
 {
-	int i, j, k, stdNumLenght;
+	int i, j, stdNumLenght;
 	int course_code = 0;
-	int coursePos = -1;
-	int StudentAMT, stdNum;
+	int studentAMT, stdNum;
 	char currChar;
 	char line[10];
 
@@ -1290,26 +1288,18 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
         	/*Scan of the course general infos and find the right course in the
         	array*/
             fscanf(database, "%d", &course_code);
-            for(k=0; k<CoursesAMT && coursePos != k; k++)
-            {
-            	if(AllCourses[k].code == course_code)
-            	{
-            		coursePos = k;
-            	}
-            }
             fseek(database, 23, SEEK_CUR);
 
             /*Scan of each course slot*/
-            for(j=0; j < SLOT_NUM && coursePos != -1; j++)
+            for(j=0; j < SLOT_NUM; j++)
             {
-            	StudentAMT = AllCourses[coursePos].slot_a[j].StudentAMT;
-            	StudentAMT = 0;
+            	studentAMT = 0;
             	fseek(database, 8, SEEK_CUR);
             	currChar = fgetc(database);
             	/*loading each student enrolled in the class*/
         		while (currChar != '\n')
         		{
-        			if(StudentAMT<MAX_PER_CLASS)
+        			if(studentAMT<MAX_PER_CLASS)
         			{
         				fseek(database, -1, SEEK_CUR);
         				/*student number calcul*/
@@ -1319,15 +1309,15 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
         					currChar = fgetc(database);
         					stdNum = stdNum + (currChar-'0')*pow(10, stdNumLenght);
         				}
-        				AllCourses[coursePos].slot_a[j].studentEn[StudentAMT] = stdNum;
-        				EnrollStudent(AllCourses[coursePos].code, stdNum, head, 
+        				AllCourses[i].slot_a[j].studentEn[studentAMT] = stdNum;
+        				EnrollStudent(AllCourses[i].code, stdNum, head, 
         					AllCourses, CoursesAMT, j);
-        				StudentAMT++;
+        				studentAMT++;
         				fseek(database, 1, SEEK_CUR);
         				currChar = fgetc(database);
         			}
         		}
-        		AllCourses[coursePos].slot_a[j].StudentAMT = StudentAMT;
+        		AllCourses[i].slot_a[j].StudentAMT = studentAMT;
             }
         }
         fclose(database);
