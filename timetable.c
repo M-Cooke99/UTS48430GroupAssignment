@@ -42,7 +42,18 @@ struct slot
 };
 typedef struct slot slot_t;
 
-struct course
+struct course	int i;
+	for(i=0;i<MAX_ENROLLMENT;i++)
+	{
+		sprintf("course: %s (%d), class type: %s, start: %s, end: %s\n "
+		 ,
+		 student.enrollments.enrolledCRSE[i].course.name,
+		 student.enrollments.enrolledCRSE[i].course.code,
+		 student.enrollments.enrolledCRSE[i].course.slot_a[i].type,
+		 student.enrollments.enrolledCRSE[i].course.slot_a[i].start,
+		 student.enrollments.enrolledCRSE[i].course.slot_a[i].end
+		 );
+	}
 {
 	int code;
 	char name[20];
@@ -153,6 +164,9 @@ int EnrollStudent(int courseNum, int stdNum, studentNode_t* head,
 	course_t AllCourses[], int coursesAMT, int slotNum);
 void AddEnrolledCourse(course_t theCourse, student_t* std);
 int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head);
+
+int editStuDetail(studentNode_t* head, student_t student);
+
 /******************************************************************************
  * MAIN 
  * Author: Victor
@@ -262,44 +276,33 @@ int saveStudentChanges(studentNode_t* head, student_t stu){
 
 /******************************************************************************
  * Student main: menu options
- * Author: Michael, Victor
+ * Author: Michael, Victor,hana
  * IN: None
  * OUT: 0 if successful
 ******************************************************************************/
 int studentMain(void){
 	int choice;
+
 	studentNode_t* studentListp;
 	studentListp = NULL;
-
-	loadStudentList(&studentListp); 
-
-	/* Makes login easier during programming */
-	studentNode_t* current = studentListp;
-	while (current != NULL){
-		printf("ID: %d PW: %s\n", current->stu.number, current->stu.password);
-		current = current->nextp;
-	}
+	
+	addStu(&studentListp);
+	/*addStu(&studentListp);*/
 
 	student_t currentStu = getStu(studentListp);
-
-	if (strcmp(currentStu.password, "default") == 0){
-		setPassword(&currentStu);
-		saveStudentChanges(studentListp,currentStu);
-	} else {
-		checkPassword(currentStu);
-	}
+	/* correctPassword(currentStu); */
 
 	do { printStuMenu(&choice);
         switch (choice){
             case 1: printStuTimetable(currentStu); break;
             case 2: printStuDetails(currentStu); break;
-            case 3: editStu(studentListp, currentStu); 
-            		checkStuNum(currentStu.number,studentListp,&currentStu); break;
+       	    case 3: editStu(studentListp, currentStu); break;
             case 4: saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
-    } while (choice != 4);
+    } while (choice != 3);
 	return 0;
 }
+
 
 /******************************************************************************
  * Prints student menu options
@@ -311,7 +314,7 @@ void printStuMenu(int* choicep){
 	printf("\n"
     "1. View Timetable\n"
     "2. View Personal Details\n"
-    "3. Edit Personal Details\n"
+    "3. edit Personal Details\n"
     "4. Exit Program\n"
     "Enter Choice (number between 1-4)> ");
     scanf("%d", choicep);
@@ -320,11 +323,31 @@ void printStuMenu(int* choicep){
 /******************************************************************************
  * Prints the students timetable, chronologically per line
  * Assume input to be student struct in which an array of timetable structs is
- * Author:
+ * Author: hana
  * IN: Student number for the timetable to be printed
  * OUT: 
 ******************************************************************************/
 void printStuTimetable(student_t student){
+	int i,j;
+	for (i = 0; i < MAX_ENROLLMENT; i++)
+	{
+		for (j = 0; j < SLOT_NUM; j++)
+		{
+
+
+			sprintf("course: %s (%d), class type: %s, start: %s, end: %s\n "
+				,
+				student.enrollments.enrolledCRSE[i].course.name,
+				student.enrollments.enrolledCRSE[i].course.code,
+				student.enrollments.enrolledCRSE[i].course.slot_a[j].type,
+				student.enrollments.enrolledCRSE[i].course.slot_a[j].start,
+				student.enrollments.enrolledCRSE[i].course.slot_a[j].end
+			);
+
+		}
+		
+	}
+/*need to modify*/
 }
 
 /******************************************************************************
@@ -342,6 +365,29 @@ void printStuDetails(student_t student){
 		student.personalInfo.address.houseNumber,
 		student.personalInfo.address.streetName,
 		student.personalInfo.phoneNum);
+}
+
+/******************************************************************************
+ * Prints the students details
+ * Author: hana
+ * IN: The student for which the details need to be printed
+ * OUT: None
+******************************************************************************/
+int editStuDetail(studentNode_t* head, student_t student)	
+{
+	int choice;
+
+	do { printEditMenu(&choice);
+        switch (choice){
+            case 1: getName(&student); printf("\nchanged name: %s %s\n", student.firstname, student.lastname);break;
+            case 2: getBirthday(&student); printf("\nchanged DOB: %d %d %d\n", student.personalInfo.birthday.day, student.personalInfo.birthday.month, student.personalInfo.birthday.year);break;
+            case 3: getAddress(&student); printf("\nchanged address: %d %s \n"student.personalInfo.address.houseNumber,student.personalInfo.address.streetName);break;
+            case 4: getPhoneNumber(&student); printf("\nchanged phone number: %ld\n", student.personalInfo.phoneNum);break;
+            case 5: setPassword(&student); break;
+	    case 6: saveStudentChanges(head,student); break;
+            default: printf("Invalid choice\n");} 
+    } while (choice != 6);
+	return 0;
 }
 
 /******************************************************************************
