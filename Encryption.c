@@ -65,7 +65,7 @@ int getFilelen (char file_name[], int mode)
 {
 	long size = 0;
 	char ch;
-	
+	FILE* = fp;
 	fp = fopen(file_name,"r");
 	if (fp == NULL)
 	{
@@ -82,6 +82,7 @@ int getFilelen (char file_name[], int mode)
 			size++;
 		}
 	}
+	close(fp);
 	return size;
 }
 /******************************************************************************
@@ -91,7 +92,7 @@ void getFileSeq (char fileSeq[], char file_name[], int mode)
 {
 	int i=0;
 	char ch;
-	
+	FILE* = fp;
 	fp = fopen(file_name,"r");
 	if (fp == NULL)
 	{
@@ -204,6 +205,7 @@ NOTE: Cannot string print due to possible ASCII conflicts
 ******************************************************************************/
 void fileconvert (char file_name[], char outSeq[], int filelen, int mode)
 {
+	FILE* = fp;
 	int i;
 	fp = fopen (file_name,"w");
 	if (fp == NULL)
