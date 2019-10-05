@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-FILE* fp;
-
 void EncryptDecrypt (char file_name[], int mode);
 void getPass (char pass[], int* passlen, int mode);
 int getFilelen (char file_name[], int mode);
