@@ -83,6 +83,7 @@ struct timetable
 {
 	int coursesAMT;
 	studentCourse_t enrolledCRSE[MAX_ENROLLMENT];
+	course_t course;
 };
 typedef struct timetable timetable_t;
 
