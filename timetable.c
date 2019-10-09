@@ -83,7 +83,6 @@ struct timetable
 {
 	int coursesAMT;
 	studentCourse_t enrolledCRSE[MAX_ENROLLMENT];
-	course_t course;
 };
 typedef struct timetable timetable_t;
 
@@ -130,7 +129,7 @@ int validClassName(char className[]);
 int validGroupNum(int groupNum);
 void chooseClass(int* courseNum, char classType[], int* group);
 int checkEnrollment(student_t stu, int courseNum, char classType[], int group);
-void printClass(studentNode_t* head);
+void printClass(studentNode_t* head, course_t AllCourses[], int coursesAMT);
 void printEnrollment();
 int loadCourse(course_t AllCourses[], int* CoursesAMT);
 int saveClasses(course_t AllCourses[], int CoursesAMT);
@@ -148,12 +147,16 @@ void getPhoneNumber(student_t* stup);
 int validStuNum(int number);
 int validPhoneNumber(long phoneNum);
 int validDate(int day, int month, int year);
-int FindCourse(int courseNum, course_t* theCourse, course_t AllCourses[],
+int FindCourse(int courseNum, course_t AllCourses[],
 	int coursesAMT);
-int EnrollStudent(int courseNum, int stdNum, studentNode_t* head,
-	course_t AllCourses[], int coursesAMT, int slotNum);
+/*int EnrollStudent(int courseNum, int stdNum, studentNode_t* head,
+	course_t AllCourses[], int coursesAMT, int slotNum);*//* Not really working for now*/
 void AddEnrolledCourse(course_t theCourse, student_t* std);
+void EnrollAStudent(studentNode_t* head, course_t AllCourses[], int coursesAMT);
 int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head);
+int saveEnrollments(course_t AllCourses[], int CoursesAMT);
+void DisenrollAStudent(studentNode_t* head, course_t AllCourses[], int coursesAMT);
+
 /******************************************************************************
  * MAIN 
  * Author: Victor
@@ -322,7 +325,7 @@ void printStuMenu(int* choicep){
 /******************************************************************************
  * Prints the students timetable, chronologically per line
  * Assume input to be student struct in which an array of timetable structs is
- * Author:
+ * Author: Hana
  * IN: Student number for the timetable to be printed
  * OUT: 
 ******************************************************************************/
@@ -401,19 +404,23 @@ int adminMain(void){
             case 3: editStu(studentListp, getStu(studentListp)); break;
             case 4: printStu(studentListp); break;
 	    	case 5: printCourse(AllCourses, CoursesAMT); break;
-	    	case 6: printClass(studentListp); break;
+	    	case 6: printClass(studentListp, AllCourses, CoursesAMT); break;
 	    	case 7: printEnrollment(studentListp); break;
 	    	case 8: addCourse(AllCourses, &CoursesAMT); break;
-	    	case 9: saveStudentList(studentListp); break;
+	    	case 9: EnrollAStudent(studentListp, AllCourses, CoursesAMT);
+	    		break;
+	    	case 10: DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
+	    		break;
+	    	case 11: saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
-    } while (choice != 9);
+    } while (choice != 11);
 	return 0;
 }
 
 
 /******************************************************************************
  * Prints admin menu options 
- * Author: Michael, Victor
+ * Author: Michael, Victor, Quentin
  * IN: Pointer to 'choice' storage location
  * OUT: None
 ******************************************************************************/
@@ -427,8 +434,10 @@ void printAdminMenu(int* choicep){
     "6. Show Class information\n"
     "7. Show all enrolled students\n"
     "8. Add a course\n"
-    "9. Exit Program\n"
-    "Enter Choice (number between 1-9)> ");
+    "9. Enroll a student to a class\n"
+    "10. Remove a student from a class\n"
+    "11. Exit Program\n"
+    "Enter Choice (number between 1-10)> ");
     scanf("%d", choicep);
 }
 
@@ -519,7 +528,7 @@ void getBirthday(student_t* stup){
 		scanf("%d%d%d", &day, &month, &year);
 
 		if(!validDate(day, month, year)){
-			printf("Invalid date.\n");
+			printf("Invalid date.");
 		}
 
 	} while (!validDate(day, month, year));
@@ -622,7 +631,7 @@ int removeStu(studentNode_t** head){
 
 /******************************************************************************
  * Edit student details function
- * Author: Victor, hana
+ * Author: Victor
  * IN: pointer to the first node in the student list, student to be edited
  * OUT: 0 if successful
 ******************************************************************************/
@@ -783,7 +792,7 @@ void chooseClass(int* courseNum, char classType[], int* group)
 }
 
 /******************************************************************************
- * Check if a student is enrolled in a particular class 
+ * Check if a student is enrolled in a particular class (MAJ: USELESS)
  * Author: Quentin
  * IN: the student, the class to check (number of the course, the class type
  * and the group number) 
@@ -820,33 +829,42 @@ int checkEnrollment(student_t stu, int courseNum, char classType[], int group)
 /******************************************************************************
  * Prints the names and number of students enrolled in a given Lab/Lec/Tut 
  * Author: Quentin
- * IN: pointer to the first node in the linked list of students
+ * IN: pointer to the first node in the linked list of students, the array of 
+ * the courses, the amount of courses
  * OUT: None
 ******************************************************************************/
-void printClass(studentNode_t* head)
+void printClass(studentNode_t* head, course_t AllCourses[], int coursesAMT)
 {
-	int courseNum, group; 
+	int courseNum, group, i, k, stuNum; 
 	char classType[4];
 	int newLine = 0;
+	int location;
+	student_t oneStudent;
 
 	chooseClass(&courseNum, classType, &group);
+	location = FindCourse(courseNum, AllCourses, coursesAMT);
 
-	studentNode_t* current = head;
-
-    while (current != NULL)
+    for (i = 0; i<6; i++)
     {
-    	if(checkEnrollment(current->stu, courseNum, classType, group) == 0)
+    	if(AllCourses[location].slot_a[i].group == group && 
+    		strcmp(AllCourses[location].slot_a[i].type, classType)==0)
     	{
-    		printf("%d %s\t", current->stu.number, current->stu.lastname);
-    		newLine++;
-    	}
-    	current = current->nextp;
-    	if(newLine == 4)
-    	{
-    		printf("\n");
-    		newLine = 0;
+    		printf("Enrolled students :\n");
+    		for(k=0; k<AllCourses[location].slot_a[i].StudentAMT; k++)
+    		{
+    			stuNum = AllCourses[location].slot_a[i].studentEn[k];
+    			checkStuNum(stuNum, head, &oneStudent);
+    			printf("%d %s\t", stuNum, oneStudent.lastname);
+    			newLine++;
+    			if(newLine == 4)
+    			{
+    				printf("\n");
+    				newLine = 0;
+    			}
+    		}
     	}
     }
+    printf("\n");
 }
 
 
@@ -1223,42 +1241,112 @@ int loadStudentList(studentNode_t** head){
 }
 
 /******************************************************************************
+ * Enroll a student to a class (not to the linked list) 
+ * Author: Quentin
+ * IN: pointer to the first node in the linked list of students, the array of 
+ * the courses, the amount of courses
+ * OUT: None
+******************************************************************************/
+void EnrollAStudent(studentNode_t* head, course_t AllCourses[], int coursesAMT)
+{
+	int courseNum, group, i, location; 
+	char classType[4];
+	student_t oneStudent;
+
+	oneStudent = getStu(head);
+	printf("Class informations\n");
+	chooseClass(&courseNum, classType, &group);
+	location = FindCourse(courseNum, AllCourses, coursesAMT);
+
+    for (i = 0; i<6; i++)
+    {
+    	if(AllCourses[location].slot_a[i].group == group && 
+    		strcmp(AllCourses[location].slot_a[i].type, classType)==0)
+    	{
+    		AllCourses[location].slot_a[i].studentEn[AllCourses[location].slot_a[i].StudentAMT] 
+    			= oneStudent.number;
+    		AllCourses[location].slot_a[i].StudentAMT++;
+    	}
+    }
+    saveEnrollments(AllCourses, coursesAMT);
+}
+
+/******************************************************************************
+ * Remove a student from a class (not to the linked list) 
+ * Author: Quentin
+ * IN: pointer to the first node in the linked list of students, the array of 
+ * the courses, the amount of courses
+ * OUT: None
+******************************************************************************/
+void DisenrollAStudent(studentNode_t* head, course_t AllCourses[], 
+	int coursesAMT)
+{
+	int courseNum, group, i, j, k, location; 
+	char classType[4];
+	student_t oneStudent;
+
+	oneStudent = getStu(head);
+	printf("Class informations\n");
+	chooseClass(&courseNum, classType, &group);
+	location = FindCourse(courseNum, AllCourses, coursesAMT);
+
+    for (i = 0; i<6; i++)
+    {
+    	if(AllCourses[location].slot_a[i].group == group && 
+    		strcmp(AllCourses[location].slot_a[i].type, classType)==0)
+    	{
+    		for(j=0; j<AllCourses[location].slot_a[i].StudentAMT; j++)
+    		{
+    			if(AllCourses[location].slot_a[i].studentEn[j] == oneStudent.number)
+    			{
+    				for(k=j+1; k<AllCourses[location].slot_a[i].StudentAMT; k++)
+    				{
+    					AllCourses[location].slot_a[i].studentEn[k] 
+    					= AllCourses[location].slot_a[i].studentEn[k+1];
+    				}
+    				AllCourses[location].slot_a[i].StudentAMT--;
+    			}
+    		}
+    	}
+    }
+    saveEnrollments(AllCourses, coursesAMT);
+}
+
+/******************************************************************************
  * Find a course from the number
  * Author: Quentin
  * IN: the number of the course, a pointer to the course we want to find, the 
  * array of the courses, the amount of courses
- * OUT: 0 if found, 1 if not
+ * OUT: the place in the array if found, 1 if not found
 ******************************************************************************/
-int FindCourse(int courseNum, course_t* theCourse, course_t AllCourses[],
-	int coursesAMT)
+int FindCourse(int courseNum, course_t AllCourses[], int coursesAMT)
 {
 	int i;
 	for(i = 0; i<coursesAMT; i++)
 	{
 		if(AllCourses[i].code == courseNum)
 		{
-			*theCourse = AllCourses[i];
-			return 0;
+			return i;
 		}
 	}
 	return 1;
 }
 
 /******************************************************************************
- * Enroll a student to a classe
+ * Save the infos of the enrollments to the students linked list (NOT WORKING)
  * Author: Quentin
  * IN: the course we want to add, the student, a pointer to the first node in 
  * the linked list of students, the array of courses, the amount of courses in 
  * the array, the slot number in which we want to enroll the student
- * OUT: 0 if successful, 1 if unsuccessful
+ * OUT: 0 if successful, 1 if unsuccessfull
 ******************************************************************************/
-int EnrollStudent(int courseNum, int stdNum, studentNode_t* head,
+/*int EnrollStudent(int courseNum, int stdNum, studentNode_t* head,
 	course_t AllCourses[], int coursesAMT, int slotNum)
 {
 	student_t std;
 	course_t* crse = (course_t*) malloc(sizeof(course_t));
 	checkStuNum(stdNum, head, &std);
-	if(FindCourse(courseNum, crse, AllCourses, coursesAMT) == 0)
+	if(FindCourse(courseNum, crse, AllCourses, coursesAMT) != 1)
 	{
 		coursesAMT = std.enrollments.coursesAMT;
 		if(coursesAMT < MAX_ENROLLMENT)
@@ -1292,7 +1380,7 @@ int EnrollStudent(int courseNum, int stdNum, studentNode_t* head,
 		}
 	}
 	return 1;
-}
+}*/
 
 /******************************************************************************
  * Add a course to the student enrollments
@@ -1351,11 +1439,13 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
         				for(stdNumLenght = 7; stdNumLenght>=0; stdNumLenght--)
         				{
         					currChar = fgetc(database);
-        					/*  stdNum = stdNum + (currChar-'0')*pow(10, stdNumLenght); */
+        					stdNum = stdNum + (currChar-'0')*pow(10, stdNumLenght);
         				}
         				AllCourses[i].slot_a[j].studentEn[studentAMT] = stdNum;
-        				EnrollStudent(AllCourses[i].code, stdNum, head, 
-        					AllCourses, CoursesAMT, j);
+        				/*EnrollStudent(AllCourses[i].code, stdNum, head, 
+        					AllCourses, CoursesAMT, j); 
+        				To save the enrollments to the linked list, 
+        				not working*/
         				studentAMT++;
         				fseek(database, 1, SEEK_CUR);
         				currChar = fgetc(database);
@@ -1372,5 +1462,51 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
         return 1;
     }
     
+    return 0;
+}
+
+/******************************************************************************
+ * Saves the enrollments to the file 
+ * Author: Quentin
+ * IN: the array where we are storing the courses, a pointer to the amount of
+ * courses in the array
+ * OUT: 0 if successful, 1 if unsuccessful
+******************************************************************************/
+int saveEnrollments(course_t AllCourses[], int CoursesAMT)
+{
+	int i, j, k;
+	FILE* database = NULL;
+    database = fopen(ENROLLMENTS_FILE, "w");
+
+    if (database != NULL)
+    {
+        for(i=0; i < CoursesAMT; i++)
+        {
+        	fprintf(database, " \n");
+        	/*Saves the course general infos*/
+            fprintf(database, "%d %-21s\n", AllCourses[i].code, 
+            	AllCourses[i].name);
+
+            /*Saves each course slot infos*/
+            for(j=0; j < SLOT_NUM; j++)
+            {
+            	fprintf(database, "%s %d:\t",
+            		AllCourses[i].slot_a[j].type, AllCourses[i].slot_a[j].group);
+            	for(k = 0; k<AllCourses[i].slot_a[j].StudentAMT; k++)
+            	{
+            		fprintf(database, "\t%d", AllCourses[i].slot_a[j].studentEn[k]);
+            	}
+            	fprintf(database, " \n");
+            }
+        }
+    }
+    else
+    {
+        printf("Write error\n");
+        return 1;
+    }
+
+    fclose(database);
+
     return 0;
 }
