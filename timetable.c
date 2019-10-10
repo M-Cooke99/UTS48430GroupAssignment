@@ -661,7 +661,7 @@ int editStu(studentNode_t* head, student_t stu){
             		printf("\nName changed to: %s %s\n", stu.firstname,
             		stu.lastname); break;
             case 2: getBirthday(&stu); 
-            		printf("\nBirthday changed to: %d %d %d\n", 
+            		printf("\nBirthday changed to: %02d/%02d/%4d\n", 
             		stu.personalInfo.birthday.day, 
             		stu.personalInfo.birthday.month, 
             		stu.personalInfo.birthday.year); break;
@@ -690,7 +690,7 @@ void printEditMenu(int* choicep){
     "2. Birthday\n"
     "3. Address\n"
     "4. Phone Number\n"
-    "5. Set Password\n"
+    "5. Password\n"
     "6. Exit Menu\n"
     "Enter Choice (number between 1-6)> ");
     scanf("%d", choicep);
