@@ -115,7 +115,7 @@ void setPassword(student_t* stup);
 int saveStudentChanges(studentNode_t* head, student_t stu);
 int studentMain(void);
 void printStuMenu(int* choicep);
-void printStuTimetable(student_t student);
+void printStuTimetable(int stdNum, course_t AllCourses[], int coursesAMT);
 void printStuDetails(student_t student);
 int adminMain(void);
 void printAdminMenu(int* choicep);
@@ -123,7 +123,7 @@ void addStu(studentNode_t** head);
 int removeStu(studentNode_t** head);
 int editStu(studentNode_t* head, student_t stu);
 void printEditMenu(int* choicep);
-void printStu(studentNode_t* head);
+void printStu(studentNode_t* head, course_t AllCourses[], int coursesAMT);
 void printCourse(course_t AllCourses[], int coursesAMT);
 int validCourseNum(int courseNum);
 int validClassName(char className[]);
@@ -275,6 +275,10 @@ int studentMain(void){
 	int choice;
 	studentNode_t* studentListp;
 	studentListp = NULL;
+	course_t AllCourses[MAX_COURSES_AMT];
+	int CoursesAMT = 0;
+	loadCourse(AllCourses, &CoursesAMT);
+	loadEnrollments(AllCourses, CoursesAMT, studentListp);
 
 	loadStudentList(&studentListp); 
 
@@ -296,7 +300,8 @@ int studentMain(void){
 
 	do { printStuMenu(&choice);
         switch (choice){
-            case 1: printStuTimetable(currentStu); break;
+            case 1: printStuTimetable(currentStu.number,AllCourses,CoursesAMT); 
+            		break;
             case 2: printStuDetails(currentStu); break;
             case 3: editStu(studentListp, currentStu); 
             		checkStuNum(currentStu.number,studentListp,&currentStu); 
@@ -326,41 +331,52 @@ void printStuMenu(int* choicep){
 /******************************************************************************
  * Prints the students timetable, chronologically per line
  * Assume input to be student struct in which an array of timetable structs is
- * Author: Hana
- * IN: Student number for the timetable to be printed
+ * Author: Hana, Quentin
+ * IN: Student number for the timetable to be printed, the array where we are 
+ * storing the courses, the amount of courses in the array
  * OUT: 
 ******************************************************************************/
-void printStuTimetable(student_t student){
+void printStuTimetable(int stdNum, course_t AllCourses[], int coursesAMT){
 
 printf("\n===="
 	" timetable "
 	"====\n"
 	);
- int i,f;
-/* need to change  ------>  repeat (number of the subjects student enrolled) times.*/
+ int i, j, f;
+ int courseHeader;
 
-	for(i = 0; i<3; i++)
+	for(i = 0; i<coursesAMT; i++)
 	{
-	printf("%03d %s - Lecturer: %s \n",
-	student.enrollments.enrolledCRSE[i].course.code, 
-	student.enrollments.enrolledCRSE[i].course.name, 
-	student.enrollments.enrolledCRSE[i].course.lecturer);
-
-		for(f = 0; f<1; f++)
+		courseHeader = 0;
+		for(f=0; f<SLOT_NUM; f++)
 		{
-		printf("%s%d time: %sday %02d:%02d ~ %02d:%02d, location: CB.%d.%d.%d \n",
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].type,
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].group,
+			for(j=0; j<AllCourses[i].slot_a[f].StudentAMT; j++)
+			{
+				if(stdNum == AllCourses[i].slot_a[f].studentEn[j])
+				{
+					if(courseHeader == 0)
+					{
+						printf("%03d %s - Lecturer: %s \n",
+							AllCourses[i].code, 
+							AllCourses[i].name, 
+							AllCourses[i].lecturer);
+						courseHeader = 1;
+					}
+					printf("%s%d time: %sday %02d:%02d ~ %02d:%02d, location: CB.%d.%d.%d \n",
+						AllCourses[i].slot_a[f].type,
+						AllCourses[i].slot_a[f].group,
 
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].start.day,
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].start.hour,
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].start.minute , 
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].end.hour,
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].end.minute ,
+						AllCourses[i].slot_a[f].start.day,
+						AllCourses[i].slot_a[f].start.hour,
+						AllCourses[i].slot_a[f].start.minute , 
+						AllCourses[i].slot_a[f].end.hour,
+						AllCourses[i].slot_a[f].end.minute ,
 
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].building ,
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].floor, 
-		student.enrollments.enrolledCRSE[i].course.slot_a[f].room );
+						AllCourses[i].slot_a[f].building ,
+						AllCourses[i].slot_a[f].floor, 
+						AllCourses[i].slot_a[f].room );
+				}
+			}
 		}
 	}	
 }
@@ -403,7 +419,7 @@ int adminMain(void){
             case 1: addStu(&studentListp); break;
             case 2: removeStu(&studentListp); break;
             case 3: editStu(studentListp, getStu(studentListp)); break;
-            case 4: printStu(studentListp); break;
+            case 4: printStu(studentListp, AllCourses, CoursesAMT); break;
 	    	case 5: printCourse(AllCourses, CoursesAMT); break;
 	    	case 6: printClass(studentListp, AllCourses, CoursesAMT); break;
 	    	case 7: printEnrollment(studentListp); break;
@@ -683,13 +699,14 @@ void printEditMenu(int* choicep){
 /******************************************************************************
  * Prints a students details followed by their timetable
  * Author: Michael, Victor
- * IN: pointer to the first node of the student linked list
+ * IN: pointer to the first node of the student linked list, the array where 
+ * we are storing the courses, a pointer to the amount of courses in the array
  * OUT: None
 ******************************************************************************/
-void printStu(studentNode_t* head){
+void printStu(studentNode_t* head, course_t AllCourses[], int coursesAMT){
 	student_t student = getStu(head);
 	printStuDetails(student);
-	printStuTimetable(student);
+	printStuTimetable(student.number, AllCourses, coursesAMT);
 }
 
 /******************************************************************************
