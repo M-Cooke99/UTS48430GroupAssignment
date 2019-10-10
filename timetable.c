@@ -338,10 +338,7 @@ void printStuMenu(int* choicep){
 ******************************************************************************/
 void printStuTimetable(int stdNum, course_t AllCourses[], int coursesAMT){
 
-printf("\n===="
-	" timetable "
-	"====\n"
-	);
+printf("\n==== timetable ====\n");
  int i, j, f;
  int courseHeader;
 
