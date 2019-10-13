@@ -542,7 +542,7 @@ void getBirthday(student_t* stup){
 		scanf("%d%d%d", &day, &month, &year);
 
 		if(!validDate(day, month, year)){
-			printf("Invalid date.");
+			printf("Invalid date.\n");
 		}
 
 	} while (!validDate(day, month, year));
