@@ -18,6 +18,9 @@ int main (int argc, char* argv[]) {
     if (argc < 2) {
        printf("Syntax error\n");
        printf("Correct syntax: %s option argument_file\n", argv[0]);
+       printf("The following options are available:\n");
+       printf("%8s -c %6s Compress    (argument_file required)\n", " ", " ");
+       printf("%8s -d %6s Decompress\n", " ", " ");
     } else {
         if (strcmp(argv[1], "-c") == 0) {
             char* input_file = argv[2];
