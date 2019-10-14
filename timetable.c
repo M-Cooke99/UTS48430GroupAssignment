@@ -68,7 +68,7 @@ int checkStuNum(int stuNum, studentNode_t* head, student_t* match){
 		}
 		current = current->nextp;
 	}
-	printf("Student Number Invalid\n");
+	printf("Student Number Invalid.\n");
 	return 0;
 }
 
@@ -97,10 +97,19 @@ void checkPassword(student_t student){
 ******************************************************************************/
 void setPassword(student_t* stup){
 	if (strcmp((*stup).password,"default")!=0){
+
+		#ifdef DEBUG
+			printf("DEBUG: Known user, confirm password\n");
+		#endif
+
 		checkPassword(*stup);
 	}
 	printf("Set a password> ");
 	scanf("%s", (*stup).password);
+
+	#ifdef DEBUG
+		printf("DEBUG: Password set to '%s'\n", (*stup).password);
+	#endif
 }
 
 /******************************************************************************
@@ -114,10 +123,20 @@ int saveStudentChanges(studentNode_t* head, student_t stu){
 	while (current != NULL){
 		if (stu.number == current->stu.number){
 			current->stu = stu;
+
+			#ifdef DEBUG
+				printf("DEBUG: Changes saved succesfully\n");
+			#endif
+
 			return 1;
 		}
 	current = current->nextp;
 	}
+
+	#ifdef DEBUG
+		printf("DEBUG: Unable to save changes, student not found\n");
+	#endif
+
 	return 0;
 }
 
@@ -148,6 +167,11 @@ int studentMain(void){
 	student_t currentStu = getStu(studentListp);
 
 	if (strcmp(currentStu.password, "default") == 0){
+
+		#ifdef DEBUG
+			printf("DEBUG: First login, password needs to be set\n");
+		#endif
+
 		setPassword(&currentStu);
 		saveStudentChanges(studentListp,currentStu);
 	} else {
@@ -278,9 +302,9 @@ int adminMain(void){
 	    	case 7: printEnrollment(studentListp); break;
 	    	case 8: addCourse(AllCourses, &CoursesAMT); break;
 	    	case 9: EnrollAStudent(studentListp, AllCourses, CoursesAMT);
-	    		break;
+	    			break;
 	    	case 10: DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
-	    		break;
+	    			break;
 	    	case 11: saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 11);
@@ -330,6 +354,12 @@ void addStu(studentNode_t** head){
 		*head = (studentNode_t*) malloc(sizeof(studentNode_t));
 		(*head)->stu=new;
 		(*head)->nextp=NULL;
+
+		#ifdef DEBUG
+			printf("DEBUG: Student list has been created and first student "
+				"has been added succesfully");
+		#endif
+
 	} else {
 		studentNode_t* current = *head;
 		while (current->nextp != NULL){
@@ -338,6 +368,10 @@ void addStu(studentNode_t** head){
 		current->nextp = (studentNode_t*) malloc(sizeof(studentNode_t));
 		current->nextp->stu = new;
 		current->nextp->nextp = NULL;
+
+		#ifdef DEBUG
+			printf("DEBUG: Student has succesfully been added to the list");
+		#endif
 	} 
 
 }
@@ -351,6 +385,11 @@ void addStu(studentNode_t** head){
 void getName(student_t* stup){
 	printf("Enter first and last name of student, seperated by a space> ");
 	scanf("%s%s", (*stup).firstname, (*stup).lastname);
+	
+	#ifdef DEBUG
+		printf("DEBUG: Name set to %s %s\n", (*stup).firstname, 
+			(*stup).lastname);
+	#endif
 }
 
 /******************************************************************************
@@ -372,6 +411,10 @@ void getNumber(student_t* stup){
 	} while (!validStuNum(temp));
 	
 	(*stup).number = temp;
+
+	#ifdef DEBUG
+		printf("DEBUG: Student number valid and set to %d\n", (*stup).number);
+	#endif
 }
 
 /******************************************************************************
@@ -406,6 +449,13 @@ void getBirthday(student_t* stup){
 	(*stup).personalInfo.birthday.day = day;
 	(*stup).personalInfo.birthday.month = month;
 	(*stup).personalInfo.birthday.year = year;
+
+	#ifdef DEBUG
+		printf("DEBUG: Birthday valid and set to %02d/%02d/%4d\n",
+			(*stup).personalInfo.birthday.day,
+			(*stup).personalInfo.birthday.month,
+			(*stup).personalInfo.birthday.year);
+	#endif
 }
 
 /******************************************************************************
@@ -431,6 +481,12 @@ void getAddress(student_t* stup){
 		" seperated by a space> ");
 	scanf("%d%s",&(*stup).personalInfo.address.houseNumber,
 		(*stup).personalInfo.address.streetName);
+
+	#ifdef DEBUG
+		printf("DEBUG: Address set to %d %s\n", 
+			(*stup).personalInfo.address.houseNumber,
+			(*stup).personalInfo.address.streetName);
+	#endif
 }
 
 /******************************************************************************
@@ -453,6 +509,11 @@ void getPhoneNumber(student_t* stup){
 	} while (!validPhoneNumber(phoneNum));
 
 	(*stup).personalInfo.phoneNum = phoneNum;
+
+	#ifdef DEBUG
+		printf("DEBUG: Phone number valid and set to %ld\n", 
+			(*stup).personalInfo.phoneNum);
+	#endif
 }
 
 /******************************************************************************
@@ -483,19 +544,29 @@ int removeStu(studentNode_t** head){
 				next_node = (*head)->nextp;
 				free(*head);
 				*head = next_node;
-				return 0;
 			} else if (current->nextp==NULL){
 				free(current->nextp);
 				previous->nextp=NULL;
+			} else {
+				next_node = current->nextp;
+				free(current);
+				previous->nextp = next_node;
 			}
-			next_node = current->nextp;
-			free(current);
-			previous->nextp = next_node;
-			return 0;
+
+			#ifdef DEBUG
+				printf("DEBUG: Student has succesfully been removed from "
+					"the list\n");
+			#endif
+
 		}
 		previous = current;
 		current = current->nextp;
 	}
+
+	#ifdef DEBUG
+		printf("DEBUG: Removing the student has been unsuccesful\n");
+	#endif
+
 	return 1;
 }
 
@@ -1063,6 +1134,11 @@ int saveStudentList(studentNode_t* head){
 
     fclose(fp);
 
+    #ifdef DEBUG
+		printf("DEBUG: Student list succesfully saved to %s\n",
+			STUDENTS_FILE);
+	#endif
+
     return 0;
 
 }
@@ -1107,6 +1183,12 @@ int loadStudentList(studentNode_t** head){
     }
 
     fclose(fp);
+
+    #ifdef DEBUG
+		printf("DEBUG: Student list succesfully loaded from %s\n",
+			STUDENTS_FILE);
+	#endif
+
     return 0;
 
 }
