@@ -16,6 +16,7 @@
 #define MAX_ENROLLMENT 4
 #define MAX_COURSES_AMT 20
 #define MAX_PER_CLASS 60
+/* #define DEBUG */ 
 
 /******************************************************************************
  * STRUCTURES
@@ -196,6 +197,10 @@ student_t getStu(studentNode_t* head){
 	do {printf ("Enter Student Number> ");
 		scanf ("%d", &stuNum);
 	}while (!checkStuNum(stuNum, head, &match));
+
+	#ifdef DEBUG
+		printf("\nMatch Found\n\n");
+	#endif
 
 	return match;
 }
