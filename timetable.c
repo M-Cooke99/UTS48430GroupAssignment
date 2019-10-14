@@ -577,6 +577,7 @@ int removeStu(studentNode_t** head){
 					"the list\n");
 			#endif
 
+			return 0;
 		}
 		previous = current;
 		current = current->nextp;
