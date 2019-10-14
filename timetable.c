@@ -166,8 +166,8 @@ int main(int argc, char *argv[]) {
 	if (argc <= 1){
 		printf("Specify runtime mode\n");
 		printf("The following opions are available:\n");
-        printf("%8s %s: %s \n", " ", "-a", "Admin mode");
-        printf("%8s %s: %s \n", " ", "-s", "Student mode");
+        printf("%8s %s %s %s \n", " ", "-a", " ", "Admin mode");
+        printf("%8s %s %s %s \n", " ", "-s", " ", "Student mode");
         return 1;
 	}
 	if (strcmp(argv[1],	"-a") == 0){
