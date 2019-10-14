@@ -39,12 +39,12 @@ int main(int argc, char *argv[]) {
  * OUT: student corresponding to ID input
 ******************************************************************************/
 student_t getStu(studentNode_t* head){
-	int stuNum;
-	student_t match;
+	int stuNum;	student_t match;
 
-	do {printf ("Enter Student Number> ");
+	/*Loop asking the user for a student number, until a valid one is entered*/
+	do { printf ("Enter Student Number> ");
 		scanf ("%d", &stuNum);
-	}while (!checkStuNum(stuNum, head, &match));
+	} while (!checkStuNum(stuNum, head, &match));
 
 	#ifdef DEBUG
 		printf("DEBUG: Match Found\n");
@@ -61,6 +61,8 @@ student_t getStu(studentNode_t* head){
 ******************************************************************************/
 int checkStuNum(int stuNum, studentNode_t* head, student_t* match){ 
 	studentNode_t* current = head;
+
+	/* Loops through linked list of students until a match is found */
 	while (current != NULL){
 		if (stuNum == current->stu.number) {
 			*match = current->stu;
@@ -80,6 +82,8 @@ int checkStuNum(int stuNum, studentNode_t* head, student_t* match){
 ******************************************************************************/
 void checkPassword(student_t student){
 	char pw[20];
+
+	/* Loop asking the user for a password, until the correct one is entered*/
 	do {printf ("Enter password> ");
 		scanf ("%s", pw);	
 		if (strcmp(student.password, pw)!=0){
@@ -96,6 +100,9 @@ void checkPassword(student_t student){
  * OUT: none
 ******************************************************************************/
 void setPassword(student_t* stup){
+
+	/* Known users have to confirm their password before 
+	being able to change it */
 	if (strcmp((*stup).password,"default")!=0){
 
 		#ifdef DEBUG
@@ -120,6 +127,9 @@ void setPassword(student_t* stup){
 ******************************************************************************/
 int saveStudentChanges(studentNode_t* head, student_t stu){
 	studentNode_t* current = head;
+
+	/* Loops through linked list of students until the correct student is 
+	found, when found the student with updated details is saved in the list */
 	while (current != NULL){
 		if (stu.number == current->stu.number){
 			current->stu = stu;
@@ -147,14 +157,12 @@ int saveStudentChanges(studentNode_t* head, student_t stu){
  * OUT: 0 if successful
 ******************************************************************************/
 int studentMain(void){
-	int choice;
-	studentNode_t* studentListp;
-	studentListp = NULL;
-	course_t AllCourses[MAX_COURSES_AMT];
-	int CoursesAMT = 0;
+	int choice;	studentNode_t* studentListp; studentListp = NULL;
+	course_t AllCourses[MAX_COURSES_AMT]; int CoursesAMT = 0;
+
+	/* Load necessary information from local files */
 	loadCourse(AllCourses, &CoursesAMT);
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
-
 	loadStudentList(&studentListp); 
 
 	/* Makes login easier during programming */
@@ -164,8 +172,10 @@ int studentMain(void){
 		current = current->nextp;
 	}
 
+	/* Retrieves the student struct to be used */
 	student_t currentStu = getStu(studentListp);
 
+	/* password check and set if first login */
 	if (strcmp(currentStu.password, "default") == 0){
 
 		#ifdef DEBUG
@@ -184,6 +194,7 @@ int studentMain(void){
             		break;
             case 2: printStuDetails(currentStu); break;
             case 3: editStu(studentListp, currentStu); 
+            		/* update currentStu after editing of details */
             		checkStuNum(currentStu.number,studentListp,&currentStu); 
             		break;
             case 4: saveStudentList(studentListp); break;
@@ -282,11 +293,10 @@ void printStuDetails(student_t student){
  * OUT: 0 if successful
 ******************************************************************************/
 int adminMain(void){
-	int choice;
-	course_t AllCourses[MAX_COURSES_AMT];
-	int CoursesAMT = 0;
-	studentNode_t* studentListp;
-	studentListp = NULL;
+	int choice;	course_t AllCourses[MAX_COURSES_AMT]; int CoursesAMT = 0;
+	studentNode_t* studentListp; studentListp = NULL;
+
+	/* Load necessary information from local files */
 	loadCourse(AllCourses, &CoursesAMT);
 	loadStudentList(&studentListp);
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
@@ -303,9 +313,9 @@ int adminMain(void){
 	    	case 8: addCourse(AllCourses, &CoursesAMT); break;
 	    	case 9: EnrollAStudent(studentListp, AllCourses, CoursesAMT);
 	    			break;
-	    	case 10: DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
+	    	case 10:DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
 	    			break;
-	    	case 11: saveStudentList(studentListp); break;
+	    	case 11:saveStudentList(studentListp); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 11);
 	return 0;
@@ -343,6 +353,8 @@ void printAdminMenu(int* choicep){
 ******************************************************************************/
 void addStu(studentNode_t** head){
 	student_t new;
+
+	/* Retrieve details of new student from user input */
 	getName(&new);
 	getNumber(&new);
 	strncpy(new.password,"default",20);
@@ -350,6 +362,7 @@ void addStu(studentNode_t** head){
 	getAddress(&new);
 	getPhoneNumber(&new);
 
+	/* Add new student to linked list */
 	if (*head == NULL){
 		*head = (studentNode_t*) malloc(sizeof(studentNode_t));
 		(*head)->stu=new;
@@ -357,7 +370,7 @@ void addStu(studentNode_t** head){
 
 		#ifdef DEBUG
 			printf("DEBUG: Student list has been created and first student "
-				"has been added succesfully");
+				"has succesfully been added");
 		#endif
 
 	} else {
@@ -400,8 +413,9 @@ void getName(student_t* stup){
 ******************************************************************************/
 void getNumber(student_t* stup){
 	int temp;
-	do {
-		printf("Enter student number> ");
+	
+	/*Loop asking the user for a student number, until a valid one is entered*/
+	do { printf("Enter student number> ");
 		scanf("%d", &temp);
 
 		if (!validStuNum(temp)){
@@ -410,6 +424,7 @@ void getNumber(student_t* stup){
 
 	} while (!validStuNum(temp));
 	
+	/* Save input to student struct */
 	(*stup).number = temp;
 
 	#ifdef DEBUG
@@ -436,6 +451,7 @@ int validStuNum(int number){
 void getBirthday(student_t* stup){
 	int day, month, year;
 
+	/* Loop asking the user for a birthday, until a valid one is entered */
 	do {printf("Enter birthday consisting of day, month, year,"
 			" seperated by spaces> ");
 		scanf("%d%d%d", &day, &month, &year);
@@ -446,6 +462,7 @@ void getBirthday(student_t* stup){
 
 	} while (!validDate(day, month, year));
 	
+	/* Save input to student struct */
 	(*stup).personalInfo.birthday.day = day;
 	(*stup).personalInfo.birthday.month = month;
 	(*stup).personalInfo.birthday.year = year;
@@ -499,6 +516,7 @@ void getAddress(student_t* stup){
 void getPhoneNumber(student_t* stup){
 	long phoneNum;
 
+	/* Loop asking the user for a phone number, until a valid one is entered */
 	do {printf("Enter phone number> ");
 		scanf("%ld",&phoneNum);
 
@@ -508,6 +526,7 @@ void getPhoneNumber(student_t* stup){
 
 	} while (!validPhoneNumber(phoneNum));
 
+	/* Save input to student struct */
 	(*stup).personalInfo.phoneNum = phoneNum;
 
 	#ifdef DEBUG
@@ -533,13 +552,13 @@ int validPhoneNumber(long phoneNum){
  * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int removeStu(studentNode_t** head){
-	student_t stu = getStu(*head);
-	studentNode_t* current = *head;
-	studentNode_t* previous = NULL;
-	studentNode_t* next_node = NULL;
+	student_t stu = getStu(*head); studentNode_t* current = *head;
+	studentNode_t* previous = NULL;	studentNode_t* next_node = NULL;
 
+	/* Loops through linked list of students until the correct one has been 
+		found, after which it is removed from the linked list */
 	while (current!=NULL){
-		if (stu.number == current->stu.number){
+		if (stu.number == current->stu.number) {
 			if (previous == NULL){
 				next_node = (*head)->nextp;
 				free(*head);
@@ -628,6 +647,7 @@ void printEditMenu(int* choicep){
  * OUT: None
 ******************************************************************************/
 void printStu(studentNode_t* head, course_t AllCourses[], int coursesAMT){
+	/* Retrieve student and display information */
 	student_t student = getStu(head);
 	printStuDetails(student);
 	printStuTimetable(student.number, AllCourses, coursesAMT);
@@ -1110,9 +1130,9 @@ int addCourse(course_t AllCourses[], int* CoursesAMT)
  * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int saveStudentList(studentNode_t* head){
-	FILE* fp = NULL;
-    fp = fopen(STUDENTS_FILE, "w");
+	FILE* fp = NULL; fp = fopen(STUDENTS_FILE, "w");
 
+	/* check if file has been opened correctly before writing */
     if (fp == NULL){
         printf("Write error\n");
         return 1;
@@ -1120,6 +1140,8 @@ int saveStudentList(studentNode_t* head){
 
     studentNode_t* current = head;
 
+    /* Loop through linked list of students and save each student in the opened
+     	text file */
     while (current != NULL){
     	fprintf(fp, "\n \n%8d %s %s pw: %s %02d/%02d/%4d %d %s %10ld",
     		current->stu.number,current->stu.firstname, current->stu.lastname,
@@ -1150,10 +1172,10 @@ int saveStudentList(studentNode_t* head){
  * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int loadStudentList(studentNode_t** head){
-	FILE* fp = NULL; char line[10];
-    fp = fopen(STUDENTS_FILE, "r");
-    char firstdatapoint = 1;
+	FILE* fp = NULL; char line[10]; fp = fopen(STUDENTS_FILE, "r"); 
+	char firstdatapoint = 1;
 
+	/* check if file has been opened correctly before reading */
     if (fp == NULL){
         printf("Read error\n");
         return 1;
@@ -1163,6 +1185,8 @@ int loadStudentList(studentNode_t** head){
     studentNode_t* current = *head;
     studentNode_t* previous = NULL;
 
+    /* Loop terminiting when the next line is empty, until then read the line
+    	and save the corresponding information in a linked list */
     while(fgets(line, 10, fp) != NULL){
     	if (firstdatapoint){
     		firstdatapoint = 0;

@@ -153,9 +153,12 @@ int validDate(int day, int month, int year);
 int FindCourse(int courseNum, course_t AllCourses[],
 	int coursesAMT);
 void AddEnrolledCourse(course_t theCourse, student_t* std);
-void EnrollAStudent(studentNode_t* head, course_t AllCourses[], int coursesAMT);
-int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head);
+void EnrollAStudent(studentNode_t* head, course_t AllCourses[], 
+	int coursesAMT);
+int loadEnrollments(course_t AllCourses[], int CoursesAMT, 
+	studentNode_t* head);
 int saveEnrollments(course_t AllCourses[], int CoursesAMT);
-void DisenrollAStudent(studentNode_t* head, course_t AllCourses[], int coursesAMT);
+void DisenrollAStudent(studentNode_t* head, course_t AllCourses[], 
+	int coursesAMT);
 
 #endif
