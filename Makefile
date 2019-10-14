@@ -2,6 +2,10 @@ CC = gcc
 CFLAGS = -Wall -Werror
 LIBS = -lm
 DEPS = timetable.h
+SRC = timetable.c
+OBJ = $(SRC:.c=.o)
+EXE = timetable
+RM = rm -f 
 
 #create .o file 
 %.o: %.c $(DEPS)
@@ -9,13 +13,13 @@ DEPS = timetable.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 #create executable file
-timetable: timetable.o
+$(EXE): $(OBJ)
 	echo "Building $@"
-	$(CC) $(CFLAGS) -o timetable timetable.o $(LIBS) 
+	$(CC) $(CFLAGS) -o $(EXE) $(OBJ) $(LIBS) 
 
 #prevent 'make' from doing something with a file named clean
 .PHONY: clean
 
 clean: 
-	echo "Cleaning object files"
-	rm -f ./*.o
+	echo "Cleaning execute and object files"
+	$(RM) $(EXE) ./*.o

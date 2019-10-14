@@ -1,0 +1,32 @@
+ 
+100 Mathematics - Lecturer: Doris_Wilson
+Lec 1: mon 08:00 to mon 10:00 - CB10.00.001 - Doris_Wilson
+Lec 2: wed 14:00 to wed 16:00 - CB10.00.002 - Doris_Wilson
+Lab 1: tue 10:00 to tue 11:00 - CB10.05.230 - Jobe_Watt
+Lab 2: thu 10:00 to thu 11:00 - CB10.06.109 - Georgie_Osborn
+Tut 1: wed 10:00 to wed 11:00 - CB11.05.200 - Georgie_Osbor
+Tut 2: wed 10:00 to wed 11:00 - CB11.05.202 - Jobe_Watt
+ 
+101 Finance - Lecturer: Franklin_Giles
+Lec 1: tue 15:00 to tue 16:30 - CB10.01.022 - Franklin_Giles
+Lec 2: wed 14:00 to wed 15:30 - CB10.01.022 - Tobi_Bowman
+Lab 1: fri 09:00 to fri 10:00 - CB09.04.122 - Jillian_Forrest
+Lab 2: thu 16:00 to thu 17:00 - CB09.04.140 - Tobi_Bowman
+Tut 1: fri 10:00 to fri 11:00 - CB09.04.122 - Jillian_Forrest
+Tut 2: thu 17:00 to fri 18:00 - CB09.04.140 - Tobi_Bowman
+ 
+102 Art - Lecturer: Saira_Kearney
+Lec 1: mon 10:00 to mon 12:00 - CB04.02.100 - Saira_Kearney
+Lec 2: tue 17:00 to tue 19:00 - CB04.00.006 - Saira_Kearney
+Lab 1: fri 11:00 to fri 12:00 - CB04.01.230 - Saira_Kearney
+Lab 2: thu 15:00 to thu 16:00 - CB04.03.200 - Lillie-May_Butler
+Tut 1: tue 10:00 to fri 11:00 - CB04.04.100 - Lillie-May_Butler
+Tut 2: thu 13:00 to fri 14:00 - CB04.04.200 - Saim_Goldsmith
+ 
+103 Biology - Lecturer: Kavan_Whitaker
+Lec 1: wed 08:00 to wed 10:00 - CB01.00.101 - Jobe_Watt
+Lec 2: mon 19:00 to mon 21:00 - CB01.00.101 - Bert_Kemp
+Lab 1: tue 08:00 to tue 09:30 - CB06.08.004 - Kavan_Whitaker
+Lab 2: thu 09:00 to thu 10:30 - CB06.05.235 - Bert_Kemp
+Tut 1: mon 10:00 to fri 11:00 - CB03.05.100 - Kavan_Whitake
+Tut 2: fri 19:00 to fri 20:00 - CB03.02.200 - Jarred_Alfaro
