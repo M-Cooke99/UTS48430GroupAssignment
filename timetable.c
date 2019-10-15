@@ -677,6 +677,10 @@ void printCourse(course_t AllCourses[], int coursesAMT)
 		}
 		printf("\n");
 	}
+	#ifdef DEBUG
+		printf("DEBUG: The amount of student enrolled in each class has" 
+			"succesfully been printed");
+	#endif
 }
 
 /******************************************************************************
@@ -751,6 +755,10 @@ void chooseClass(int* courseNum, char classType[], int* group)
 			validInput = 0;
 		}
 	}
+	#ifdef DEBUG
+		printf("DEBUG: Choice of class valid and set to %d %s %d\n", 
+			*courseNum, classType, *group);
+	#endif
 	
 }
 
@@ -794,6 +802,9 @@ void printClass(studentNode_t* head, course_t AllCourses[], int coursesAMT)
     	}
     }
     printf("\n");
+    #ifdef DEBUG
+		printf("DEBUG: Class succesfully printed\n");
+	#endif
 }
 
 
@@ -833,6 +844,10 @@ void printEnrollment(course_t AllCourses[], int coursesAMT)
 		}
 	}	
     printf("\n%d students are enrolled in at least one course\n", enrolledNum);
+    #ifdef DEBUG
+		printf("DEBUG: Number of enrollments succesfully printed and is equal to %d \n",
+			enrolledNum);
+	#endif
 }
 
 /******************************************************************************
@@ -873,10 +888,18 @@ int loadCourse(course_t AllCourses[], int* CoursesAMT)
         }
  
         fclose(database);
+        #ifdef DEBUG
+			printf("DEBUG: Courses list succesfully loaded from %s\n",
+				COURSES_FILE);
+		#endif
     }
     else
     {
         printf("Read error\n");
+        #ifdef DEBUG
+			printf("DEBUG: Courses list unsuccesfully loaded from %s\n",
+				COURSES_FILE);
+		#endif
         return 1;
     }
     
@@ -919,10 +942,18 @@ int saveClasses(course_t AllCourses[], int CoursesAMT)
             		AllCourses[i].slot_a[j].room, AllCourses[i].slot_a[j].lecturer);	
             }
         }
+        #ifdef DEBUG
+			printf("DEBUG: Courses list succesfully saved to %s\n",
+				COURSES_FILE);
+		#endif
     }
     else
     {
         printf("Write error\n");
+        #ifdef DEBUG
+			printf("DEBUG: Courses list unsuccesfully saved to %s\n",
+				COURSES_FILE);
+		#endif
         return 1;
     }
 
@@ -1092,6 +1123,10 @@ int addCourse(course_t AllCourses[], int* CoursesAMT)
 
 
 	(*CoursesAMT)++;
+	#ifdef DEBUG
+		printf("DEBUG: New course %d %s and all the informations are valid\n", 
+			AllCourses[*CoursesAMT].code, AllCourses[*CoursesAMT].name);
+	#endif
 
 	success = saveClasses(AllCourses, *CoursesAMT);
 	return success;
@@ -1220,6 +1255,9 @@ void EnrollAStudent(studentNode_t* head, course_t AllCourses[], int coursesAMT)
     		AllCourses[location].slot_a[i].StudentAMT++;
     	}
     }
+    #ifdef DEBUG
+		printf("DEBUG: Student %d succesfully enrolled\n", oneStudent.number);
+	#endif
     saveEnrollments(AllCourses, coursesAMT);
 }
 
@@ -1261,6 +1299,9 @@ void DisenrollAStudent(studentNode_t* head, course_t AllCourses[],
     		}
     	}
     }
+    #ifdef DEBUG
+		printf("DEBUG: Student %d succesfully disenrolled\n", oneStudent.number);
+	#endif
     saveEnrollments(AllCourses, coursesAMT);
 }
 
@@ -1278,9 +1319,15 @@ int FindCourse(int courseNum, course_t AllCourses[], int coursesAMT)
 	{
 		if(AllCourses[i].code == courseNum)
 		{
+			#ifdef DEBUG
+				printf("DEBUG: Course found\n");
+			#endif
 			return i;
 		}
 	}
+	#ifdef DEBUG
+		printf("DEBUG: Course not found\n");
+	#endif
 	return 1;
 }
 
@@ -1344,10 +1391,18 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
             }
         }
         fclose(database);
+        #ifdef DEBUG
+			printf("DEBUG: Enrollments list succesfully loaded from %s\n",
+				ENROLLMENTS_FILE);
+		#endif
     }
     else
     {
         printf("Read error\n");
+        #ifdef DEBUG
+			printf("DEBUG: Enrollments list unsuccesfully loaded from %s\n",
+				ENROLLMENTS_FILE);
+		#endif
         return 1;
     }
     
@@ -1388,10 +1443,18 @@ int saveEnrollments(course_t AllCourses[], int CoursesAMT)
             	fprintf(database, " \n");
             }
         }
+        #ifdef DEBUG
+			printf("DEBUG: Enrollments list succesfully saved to %s\n",
+				ENROLLMENTS_FILE);
+		#endif
     }
     else
     {
         printf("Write error\n");
+        #ifdef DEBUG
+			printf("DEBUG: Enrollments list succesfully saved to %s\n",
+				ENROLLMENTS_FILE);
+		#endif
         return 1;
     }
 
