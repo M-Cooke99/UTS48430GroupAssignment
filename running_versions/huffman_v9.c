@@ -1,17 +1,17 @@
 /* 
- * author:      Oezguen Turgut 
- * date:        15/10/2019
- * description: read a textfile, compress it, and decompress it again via 
- *              huffman coding
+ * author: Oezguen Turgut 
+ * date: 24/09/2019
+ * description: read a textfile, compress it, and decompress it again via huffman
+ *              coding
  */
 
-
+#include <stdio.h>
 #include "huffman.h"
 
 
-/*****************************************************************************
+/***********************************************************************************
  * MAIN 
- *****************************************************************************/
+ **********************************************************************************/
 int main (int argc, char* argv[]) {
 
     /* check if file to compress is passed to the program */
@@ -19,23 +19,18 @@ int main (int argc, char* argv[]) {
        printf("Syntax error\n");
        printf("Correct syntax: %s option argument_file\n", argv[0]);
        printf("The following options are available:\n");
-       printf("%8s %-6s %-12s %s\n", " ", "-c", "Compress", 
-        "(argument_file required)");
-       printf("%8s %-6s %-12s %s\n", " ", "-d", "Decompress", 
-        "(argument_file required)");
+       printf("%8s -c %6s Compress    (argument_file required)\n", " ", " ");
+       printf("%8s -d %6s Decompress\n", " ", " ");
     } else {
-        if (strcmp(argv[1], "-c") == 0 && argc == 3) {
-            char* plain_file = argv[2];
-            HuffmanCompression(plain_file); 
-        } else if (strcmp(argv[1], "-d") == 0 && argc == 3) {
-            char* compressed_file = argv[2];
-            HuffmanDecompression(compressed_file, CODE_FILE);
+        if (strcmp(argv[1], "-c") == 0) {
+            char* input_file = argv[2];
+            HuffmanCompression(input_file); 
+        } else if (strcmp(argv[1], "-d") == 0) {
+            HuffmanDecompression(COMPR_TEXT, CODE_FILE);
         } else {
             printf("The following options are available:\n");
-            printf("%8s %-6s %-12s %s\n", " ", "-c", "Compress", 
-                "(argument_file required)");
-            printf("%8s %-6s %-12s %s\n", " ", "-d", "Decompress", 
-                "(argument_file required)");
+            printf("%8s -c %6s Compress    (argument_file required)\n", " ", " ");
+            printf("%8s -d %6s Decompress\n", " ", " ");
         }
     }
 
@@ -43,9 +38,9 @@ int main (int argc, char* argv[]) {
 }
 
 
-/*****************************************************************************
+/***********************************************************************************
  * FUNCTION DEFINITION 
- *****************************************************************************/
+ **********************************************************************************/
 min_heap_node_t* createNode (char character, int occurrence) {
     /* create a new node */
     min_heap_node_t* node = (min_heap_node_t*) malloc(sizeof(min_heap_node_t));
@@ -89,16 +84,14 @@ void minHeapify (min_heap_t* min_heap, int index) {
     /* check if there is a left child at all */
     if (left < min_heap->size) {
         /* check if freq of left child is lower than freq of current node */
-        if (min_heap->array[left]->occurrence < 
-            min_heap->array[smallest]->occurrence) 
+        if (min_heap->array[left]->occurrence < min_heap->array[smallest]->occurrence) 
             smallest = left;
     }
 
     /* check if there is a right child at all */
     if (right < min_heap->size) {
         /* check if freq of right child is lower than freq of current node */
-        if (min_heap->array[right]->occurrence < 
-            min_heap->array[smallest]->occurrence) 
+        if (min_heap->array[right]->occurrence < min_heap->array[smallest]->occurrence) 
            smallest = right;
     }
 
@@ -117,8 +110,7 @@ min_heap_node_t* extractMin (min_heap_t* min_heap) {
     /* get the last element of the array and put it at index 0 
      * now the min heap tree is not sorted correctly anymore    */
     min_heap->array[0] = min_heap->array[(min_heap->size) - 1];
-    /* decrease the size of the array since a node with lowest freq 
-     * was extracted */
+    /* decrease the size of the array since a node with lowest freq was extracted */
     (min_heap->size)--;
     /* rearrange the min heap tree starting from the root */
     minHeapify(min_heap, 0);
@@ -133,10 +125,8 @@ void insertNode (min_heap_t* min_heap, min_heap_node_t* node) {
     int i = (min_heap->size)-1;
 
     /* while freq of new node is lower than freq of node at index (i-1)/2 */
-    while (i > 0 && 
-        node->occurrence < min_heap->array[(i - 1) / 2]->occurrence) {
-        /* node in the middle of the array is replaced to the end of the 
-         * array */
+    while (i > 0 && node->occurrence < min_heap->array[(i - 1) / 2]->occurrence) {
+        /* node in the middle of the array is replaced to the end of the array */
         min_heap->array[i] = min_heap->array[(i - 1) / 2];
         /* index is reset */
         i = (i - 1) / 2;
@@ -154,7 +144,7 @@ void buildMinHeap (min_heap_t* min_heap) {
 }
 
 min_heap_t* createAndBuildMinHeap (data_t* linked_list) {
-	int size = getListSize(linked_list);
+	int size = getSize(linked_list);
 
     /* create the min heap */
     min_heap_t* min_heap = createMinHeap(size);
@@ -204,8 +194,7 @@ min_heap_node_t* buildHuffmanTree (data_t* linked_list) {
     return extractMin(min_heap);
 }
 
-void createCode (char file_name[], min_heap_node_t* node, 
-    int* code, int current_node) {
+void createCode (char file_name[], min_heap_node_t* node, int* code, int current_node) {
     if (node->left) {
         /* assign 0 to the left node */
         code[current_node] = 0;
@@ -265,12 +254,10 @@ data_t* countOccurrences(char file_name[]) {
 
             
             if(character == '\n') {
-                /* save the newline (\n) by using 
-                 * special character ^ (caret) */
+                /* save the newline (\n) by using special character ^ (caret) */
                 character = '^';
             } else if (character == ' ') {
-                /* save the whitespace by using 
-                 * special character * (asterisk) */
+                /* save the whitespace by using special character * (asterisk) */
                 character = '*';
             }
 
@@ -290,8 +277,7 @@ data_t* countOccurrences(char file_name[]) {
             /* if no data point for the current character exists */
             if (add_new_datapoint) {
                 if (first_datapoint) {
-                    /* don't need to allocate new memory for first 
-                     * data point */
+                    /* don't need to allocate new memory for first data point */
                     first_datapoint = 0;
                 } else {
                     ptr = (data_t*) malloc(sizeof(data_t));
@@ -333,8 +319,7 @@ data_t* loadCode(char file_name[]) {
 
         /* while the end of file (EOF) is not reached */
         while (fscanf(fptr, "< %c , %s >\n", &character, code) != EOF) {
-            /* create a data point for each <character, code> pair in the 
-             * file */
+            /* create a data point for each <character, code> pair in the file */
             ptr = (data_t*) malloc(sizeof(data_t));
 
             if (first_datapoint) {
@@ -363,7 +348,7 @@ data_t* loadCode(char file_name[]) {
     return linked_list;
 }
 
-int getListSize(data_t* linked_list) {
+int getSize(data_t* linked_list) {
     data_t* ptr = linked_list;
 
     int size = 0;
@@ -375,126 +360,58 @@ int getListSize(data_t* linked_list) {
     return size;
 }
 
-int getFileLength(char file_name[]) {
-    int file_length = 0;
-
-    /* open the file to determine its length */
-    FILE *fptr = fopen(file_name, "r");
-
-    if (fptr == NULL) {
-        printf("Error reading the file!\n");
-    } else {
-        /* count number of characters until EOF is reached */
-        char character;
-        while (fscanf(fptr, "%c", &character) != EOF) {
-            file_length++;
-        }
-    }
-
-    /* close the file after determining its length */
-    fclose(fptr);
-    return file_length;
-}
-
-char* bufferFileContent(char file_name[]) {
-    char *buffer = NULL;
-
-    /* open the file to buffer its content */
-    FILE *fptr = fopen(file_name, "r");
-
-    if (fptr == NULL) {
-        printf("Error reading the file!\n");
-    } else {
-        /* create a buffer with the respective file length */
-        int file_length = getFileLength(file_name);
-        buffer = (char *) malloc(file_length * sizeof(char));
-
-        /* store the file content (character by character) into buffer */
-        char character;
-        int i = 0;
-        while (fscanf(fptr, "%c", &character) != EOF) {
-            buffer[i] = character;
-            i++;
-        }
-    }
-
-    /* close file after storing its content into buffer */
-    fclose(fptr);
-
-    return buffer;
-}
-
-void deleteFileContent(char file_name[]) {
-    /* open the file in write mode */
-    FILE *fptr = fopen(file_name, "w");
-    /* close it directly after opening it */
-    fclose(fptr);
-}
-
 void compressText(char file_name[], data_t* linked_list){
-    /* open the file in read mode to check if it exists at all */
-    FILE *fptr = fopen(file_name, "r");
+    /* open the file you want to compress in order to read its content */
+    FILE *fptr_read = fopen(file_name, "r");
+    /* open the file in which the compressed text will be stored */
+    FILE *fptr_wrte = fopen(COMPR_TEXT, "w");
 
-    if (fptr == NULL) {
+    if (fptr_read == NULL) {
         printf("Error reading the file!\n");
     } else {
-        /* close file after checking if it exists */
-        fclose(fptr);
 
-        /* determine length of the plain file, buffer and then delete 
-         * its content */
-        int file_length = getFileLength(file_name);
-        char* buffer = bufferFileContent(file_name);
-        deleteFileContent(file_name);
-
-        /* open the file in write mode to store compressed text into it */
-        fptr = fopen(file_name, "w");
-
-        /* read the text file character by character and transform the 
-         * plain text into the compressed text */
+        /* read the text file character by character and transform the plain text
+         * into the compressed text */
         char character;
-        int i = 0;
-        for (i = 0; i < file_length; i++) {
-            character = buffer[i];
-
+        while (fscanf(fptr_read, "%c", &character) != EOF) {
             if(character == '\n') {
-                /* save the newline (\n) by using 
-                 * special character ^ (caret) */
+                /* save the newline (\n) by using special character ^ (caret) */
                 character = '^';
             } else if (character == ' ') {
-                /* save the whitespace by using 
-                 * special character * (asterisk) */
+                /* save the whitespace by using special character * (asterisk) */
                 character = '*';
             }
 
-            /* look for the current character in the linked list containing 
-             * all the <character, code> pairs */
+            /* look for the current character in the linked list containing all the
+             * <character, code> pairs */
             data_t* ptr = linked_list;
             while (ptr->character != character) {
                 ptr = ptr->next;
             }
 
-            /* write the corresponding code of the character into the 
-             * text file */
-            fprintf(fptr, "%s", ptr->code);
+            /* write the corresponding code of the character into the text file */
+            fprintf(fptr_wrte, "%s", ptr->code);
         } 
 
     }
 
-    /* close text file after modifying (plain text into code) its content */
-    fclose(fptr); 
+    /* close the text file after writing into it */
+    fclose(fptr_wrte);
+    /* close the text file after reading its content */
+    fclose(fptr_read); 
 }
 
 void HuffmanCompression(char file_name[]) {
-    /* read the text file and determine the occurrences of each character 
-     * existing in the file */
+    /* read the text file and determine the occurrences of each character existing
+     * in the file */
     data_t* linked_list = countOccurrences(file_name);
 
     /* build a huffman tree given the <character, occurrence> pairs */
     min_heap_node_t* root = buildHuffmanTree(linked_list);
 
     /* make sure that the file storing the huffman code is empty beforehand */
-    deleteFileContent(CODE_FILE);
+    FILE* fptr = fopen(CODE_FILE, "w");
+    fclose(fptr);
 
     /* create variables required by the following function */
     int* code = (int*) malloc(MAX_CODE_SIZE * sizeof(int));
@@ -504,38 +421,27 @@ void HuffmanCompression(char file_name[]) {
      * seperate text file */
     createCode(CODE_FILE, root, code, current_node);
 
-    /* AUXILIARY FUNCTION: required to transform the code from integer to 
-     * string read the text file containing the <character, code> pairs and  
-     * load the pairs into a linked list */
+    /* AUXILIARY FUNCTION: required to transform the code from integer to string
+     * read the text file containing the <character, code> pairs and load the 
+     * pairs into a linked list */
     linked_list = loadCode(CODE_FILE);
 
-    /* given the linked list, compress the text file */
+    /* given the linked list, compress the text tile */
     compressText(file_name, linked_list);
 }
 
-void HuffmanDecompression(char file_name[], char code_file[]) {
-    /* open the file containing the compressed text in read mode to check if  
-     * it exists*/
-    FILE* fptr = fopen(file_name, "r");
+void HuffmanDecompression(char compressed_file[], char code_file[]) {
+    /* get the <character, code> pairs from the code file */
+    data_t* linked_list = loadCode(code_file);
 
-    if (fptr == NULL) {
+    /* open the file containing the compressed text to read from it */
+    FILE* fptr_read = fopen(compressed_file, "r");
+    /* open a file to store the decompressed text into */
+    FILE* fptr_wrte = fopen(DECOMPR_TEXT, "w");
+
+    if (fptr_read == NULL) {
         printf("Error reading the file!\n");
     } else {
-        /* close file after checking if it exists */
-        fclose(fptr);
-
-        /* get the <character, code> pairs from the code file */
-        data_t* linked_list = loadCode(code_file);
-
-        /* determine length of the compressed file, buffer and then delete 
-         * its content */
-        int file_length = getFileLength(file_name);
-        char* buffer = bufferFileContent(file_name);
-        deleteFileContent(file_name);
-
-        /* open the file in write mode to store compressed text into it */
-        fptr = fopen(file_name, "w");
-
         /* a single character */
         char character;
         /* a string */
@@ -543,40 +449,33 @@ void HuffmanDecompression(char file_name[], char code_file[]) {
         /* make sure the string is empty */
         code[0] = '\0';
 
-        /* flag to see if the code read from the file matched a code saved in 
-         * the <character, code> pairs */
+        /* flag to see if the code read from the file matched a code saved in the 
+         * <character, code> pairs */
         char match = 0;
 
         data_t* ptr = NULL;
-        int j = 0;
-
         int i = 0;
-        /* read character by character */
-        for (i = 0; i < file_length; i++) {
-            /* get the character */
-            character = buffer[i];
 
+        /* read character by character */
+        while(fscanf(fptr_read, "%c", &character) != EOF) {
             /* concatenate the characters to a string */
-            code[j] = character;
-            code[j+1] = '\0';
+            code[i] = character;
+            code[i+1] = '\0';
             
-            /* check if the string matches any code from the <character, code> 
-             * pairs */
+            /* check if the string matches any code from the <character, code> pairs */
             ptr = linked_list;
             while (ptr != NULL) {
                 /* if there is a match, store the corresponding character into 
                  * the new file */
                 if (strcmp(ptr->code, code) == 0) {
                     if(ptr->character == '^') {
-                        /* save the newline (\n) by using 
-                         * special character ^ (caret) */
-                        fprintf(fptr, "%c", '\n');
+                        /* save the newline (\n) by using special character ^ (caret) */
+                        fprintf(fptr_wrte, "%c", '\n');
                     } else if (ptr->character == '*') {
-                        /* save the whitespace by using 
-                         * special character * (asterisk) */
-                        fprintf(fptr, "%c", ' ');
+                        /* save the whitespace by using special character * (asterisk) */
+                        fprintf(fptr_wrte, "%c", ' ');
                     } else {
-                        fprintf(fptr, "%c", ptr->character);
+                        fprintf(fptr_wrte, "%c", ptr->character);
                     }
                     match = 1;
                 }
@@ -585,17 +484,19 @@ void HuffmanDecompression(char file_name[], char code_file[]) {
 
             if (match) {
                 /* if there was a match, make sure the code string is empty */
-                j = 0;
+                i = 0;
                 code[0] = '\0';
                 match = 0;
             } else {
-                /* if there was not a match, read the next character from the 
-                 * file and append it to the existing string */
-                j++;
+                /* if there was not a match, read the next character from the file
+                 * and append it to the existing string */
+                i++;
             }
         }
     }
 
-    /* close file after modifying (code into plain text) its content */
-    fclose(fptr);
+    /* close the file after writing into it */
+    fclose(fptr_wrte);
+    /* close the file after reading its content (which is the code) */
+    fclose(fptr_read);
 }

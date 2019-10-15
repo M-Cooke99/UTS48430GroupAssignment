@@ -1,0 +1,2 @@
+huffman_v9:  saves compressed text in a seperate text file
+huffman_v10: overwrites input text file with the compressed text

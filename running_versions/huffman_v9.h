@@ -1,6 +1,6 @@
 /* 
- * author:      Oezguen Turgut 
- * date:        15/10/2019
+ * author: Oezguen Turgut 
+ * date: 24/09/2019
  * description: header file of huffman.c
  */
 
@@ -9,29 +9,31 @@
 #define HUFFMAN_H
 
 
-/*****************************************************************************
- * LIBRARIES
- *****************************************************************************/
-#include <stdio.h> /* printf, scanf */
+/***********************************************************************************
+ * LIBRARIES 
+ **********************************************************************************/
 #include <stdlib.h> /* malloc */
 #include <string.h> /* strlen */
 
 
-/*****************************************************************************
+/***********************************************************************************
  * HASH DEFINES 
- *****************************************************************************/
+ **********************************************************************************/
+#define PLAIN_TEXT		"input.txt"
 #define CODE_FILE		"code.txt"
+#define COMPR_TEXT      "compressed.txt"
+#define DECOMPR_TEXT	"decompressed.txt"
+
 #define MAX_CODE_SIZE	32
 
 
-/*****************************************************************************
+/***********************************************************************************
  * STRUCTURES 
- *****************************************************************************/
+ **********************************************************************************/
 /* a node of the huffman tree */
 struct min_heap_node {
     char character; 
-    int occurrence;                /* occurrence of the character in the text 
-                                    * file */
+    int occurrence;                /* occurrence of the character in the text file */
     struct min_heap_node *left;    /* left child node */
     struct min_heap_node *right;   /* right child node */
 };
@@ -48,17 +50,16 @@ typedef struct min_heap min_heap_t;
 /* a datapoint */
 struct data {
     char character;
-    int occurrence;             /* occurrence of the character in the text 
-                                 * file */
-    char code[MAX_CODE_SIZE];   /* huffman code corresponding to  character */
+    int occurrence;             /* occurrence of the character in the text file */
+    char code[MAX_CODE_SIZE];   /* huffman code corresponding to the character */
     struct data* next;
 };
 typedef struct data data_t;
 
 
-/*****************************************************************************
+/***********************************************************************************
  * FUNCTION PROTOTYPES 
- *****************************************************************************/
+ **********************************************************************************/
 /* create a node for a given character */
 min_heap_node_t* createNode (char character, int occurrence);
 
@@ -88,8 +89,7 @@ min_heap_t* createAndBuildMinHeap (data_t* linked_list);
 min_heap_node_t* buildHuffmanTree (data_t* linked_list);
 
 /* assign the huffman code to the characters */
-void createCode (char file_name[], min_heap_node_t* node, int* code, 
-    int current_node);
+void createCode (char file_name[], min_heap_node_t* node, int* code, int current_node);
 
 /* counts occurrences of each character appearing in a given text file */
 data_t* countOccurrences(char file_name[]);
@@ -98,16 +98,7 @@ data_t* countOccurrences(char file_name[]);
 data_t* loadCode(char file_name[]);
 
 /* determines the size of a linked list */
-int getListSize(data_t* linked_list);
-
-/* determine the length (number of characters, incl. whitespaces) of a file */
-int getFileLength(char file_name[]);
-
-/* buffer the file content in the memory */
-char* bufferFileContent(char file_name[]);
-
-/* delete the content of the file to rewrite it */
-void deleteFileContent(char file_name[]);
+int getSize(data_t* linked_list);
 
 /* compresses the plain text */
 void compressText(char file_name[], data_t* linked_list);
@@ -117,7 +108,7 @@ void HuffmanCompression(char file_name[]);
 
 /* decompress the text file given the <character, code> pairs stored in 
  * the code file*/
-void HuffmanDecompression(char file_name[], char code_file[]);
+void HuffmanDecompression(char compressed_file[], char code_file[]);
 
 
 #endif /* HUFFMAN_H */
