@@ -8,6 +8,8 @@
 #include <stdio.h> /*printf, scanf */
 #include <stdlib.h> /* malloc, free */
 #include <math.h>
+#include "huffman.h" /* HuffmanCompression, HuffmanDecompression */
+
 
 /******************************************************************************
  * #DEFINES
@@ -19,7 +21,7 @@
 #define MAX_ENROLLMENT 4
 #define MAX_COURSES_AMT 20
 #define MAX_PER_CLASS 60
-#define DEBUG
+/*#define DEBUG*/
 
 /******************************************************************************
  * STRUCTURES

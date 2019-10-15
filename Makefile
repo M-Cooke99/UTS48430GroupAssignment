@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -Werror
 LIBS = -lm
-DEPS = timetable.h
-SRC = timetable.c
+DEPS = timetable.h huffman.h
+SRC = timetable.c huffman.c
 OBJ = $(SRC:.c=.o)
 EXE = timetable
 RM = rm -f 

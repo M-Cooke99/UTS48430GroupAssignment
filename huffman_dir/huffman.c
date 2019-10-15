@@ -10,6 +10,40 @@
 
 
 /*****************************************************************************
+ * MAIN 
+ *****************************************************************************/
+int main (int argc, char* argv[]) {
+
+    /* check if file to compress is passed to the program */
+    if (argc < 2) {
+       printf("Syntax error\n");
+       printf("Correct syntax: %s option argument_file\n", argv[0]);
+       printf("The following options are available:\n");
+       printf("%8s %-6s %-12s %s\n", " ", "-c", "Compress", 
+        "(argument_file required)");
+       printf("%8s %-6s %-12s %s\n", " ", "-d", "Decompress", 
+        "(argument_file required)");
+    } else {
+        if (strcmp(argv[1], "-c") == 0 && argc == 3) {
+            char* plain_file = argv[2];
+            HuffmanCompression(plain_file); 
+        } else if (strcmp(argv[1], "-d") == 0 && argc == 3) {
+            char* compressed_file = argv[2];
+            HuffmanDecompression(compressed_file, CODE_FILE);
+        } else {
+            printf("The following options are available:\n");
+            printf("%8s %-6s %-12s %s\n", " ", "-c", "Compress", 
+                "(argument_file required)");
+            printf("%8s %-6s %-12s %s\n", " ", "-d", "Decompress", 
+                "(argument_file required)");
+        }
+    }
+
+    return 0;
+}
+
+
+/*****************************************************************************
  * FUNCTION DEFINITION 
  *****************************************************************************/
 min_heap_node_t* createNode (char character, int occurrence) {
