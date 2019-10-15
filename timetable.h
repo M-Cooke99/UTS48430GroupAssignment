@@ -74,7 +74,8 @@ struct personal
 };
 typedef struct personal personal_t;
 
-struct studentCourse
+/*This part of the code is not used*/
+/*struct studentCourse
 {
 	int LecGrp, LabGrp, TutGrp;
 	course_t course;
@@ -87,7 +88,7 @@ struct timetable
 	studentCourse_t enrolledCRSE[MAX_ENROLLMENT];
 	course_t course;
 };
-typedef struct timetable timetable_t;
+typedef struct timetable timetable_t;*/
 
 struct student
 {
@@ -96,7 +97,7 @@ struct student
 	char lastname[20];
 	char password[20] ;
 	personal_t personalInfo;
-	timetable_t enrollments;
+	/*timetable_t enrollments;*/
 };
 typedef struct student student_t;
 
@@ -131,9 +132,8 @@ int validCourseNum(int courseNum);
 int validClassName(char className[]);
 int validGroupNum(int groupNum);
 void chooseClass(int* courseNum, char classType[], int* group);
-int checkEnrollment(student_t stu, int courseNum, char classType[], int group);
 void printClass(studentNode_t* head, course_t AllCourses[], int coursesAMT);
-void printEnrollment();
+void printEnrollment(course_t AllCourses[], int coursesAMT);
 int loadCourse(course_t AllCourses[], int* CoursesAMT);
 int saveClasses(course_t AllCourses[], int CoursesAMT);
 int validLocation(int building, int floor, int room);
@@ -152,7 +152,6 @@ int validPhoneNumber(long phoneNum);
 int validDate(int day, int month, int year);
 int FindCourse(int courseNum, course_t AllCourses[],
 	int coursesAMT);
-void AddEnrolledCourse(course_t theCourse, student_t* std);
 void EnrollAStudent(studentNode_t* head, course_t AllCourses[], 
 	int coursesAMT);
 int loadEnrollments(course_t AllCourses[], int CoursesAMT, 
