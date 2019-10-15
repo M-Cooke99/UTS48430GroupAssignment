@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Werror
 LIBS = -lm
-DEPS = timetable.
+DEPS = timetable.h
 SRC = timetable.c
 OBJ = $(SRC:.c=.o)
 EXE = timetable
