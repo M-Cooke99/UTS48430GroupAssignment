@@ -218,6 +218,7 @@ void createCode (char file_name[], min_heap_node_t* node,
         createCode(file_name, node->right, code, (current_node+1));
     }    
 
+    /* the node is a leaf of the tree */
     if (node->left == NULL && node->right == NULL) {
         /* open the file to store the <character, code> pairs in */
         FILE* fptr = fopen(file_name, "a");
