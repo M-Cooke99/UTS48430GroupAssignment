@@ -3,6 +3,8 @@ CFLAGS = -Wall -Werror
 LIBS = -lm
 DEPS = timetable.h huffman.h
 SRC = timetable.c huffman.c
+DEPS = timetable.h Encrypt.h
+SRC = timetable.c Encryption.c
 OBJ = $(SRC:.c=.o)
 EXE = timetable
 RM = rm -f 

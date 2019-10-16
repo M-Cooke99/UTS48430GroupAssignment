@@ -5,7 +5,7 @@
  * LIBRARIES
 ******************************************************************************/
 #include <string.h> /* strcmp, strlen */
-#include <stdio.h> /*printf, scanf */
+#include <stdio.h> /*printf, scanf*/
 #include <stdlib.h> /* malloc, free */
 #include <math.h>
 #include "huffman.h" /* HuffmanCompression, HuffmanDecompression */
@@ -22,6 +22,7 @@
 #define MAX_COURSES_AMT 20
 #define MAX_PER_CLASS 60
 /*#define DEBUG*/
+#define MAX_NAME_LEN 20
 
 /******************************************************************************
  * STRUCTURES
@@ -95,7 +96,7 @@ typedef struct timetable timetable_t;*/
 struct student
 {
 	int number;
-	char firstname[20];
+	char firstname[MAX_NAME_LEN];
 	char lastname[20];
 	char password[20] ;
 	personal_t personalInfo;
@@ -161,5 +162,7 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT,
 int saveEnrollments(course_t AllCourses[], int CoursesAMT);
 void DisenrollAStudent(studentNode_t* head, course_t AllCourses[], 
 	int coursesAMT);
+int sort(studentNode_t* head);
+int stuAmount (studentNode_t* head);
 
 #endif

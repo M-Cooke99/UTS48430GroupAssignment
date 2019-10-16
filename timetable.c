@@ -157,12 +157,15 @@ int saveStudentChanges(studentNode_t* head, student_t stu){
  * OUT: 0 if successful
 ******************************************************************************/
 int studentMain(void){
-	int choice;	studentNode_t* studentListp; studentListp = NULL;
-	course_t AllCourses[MAX_COURSES_AMT]; int CoursesAMT = 0;
-
 	/* Load necessary information from local files */
+	int choice;
+	studentNode_t* studentListp;
+	studentListp = NULL;
+	course_t AllCourses[MAX_COURSES_AMT];
+	int CoursesAMT = 0;
 	loadCourse(AllCourses, &CoursesAMT);
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
+	EncryptDecrypt (STUDENTS_FILE, 1);
 	loadStudentList(&studentListp); 
 
 	/* Makes login easier during programming */
@@ -187,7 +190,9 @@ int studentMain(void){
 	} else {
 		checkPassword(currentStu);
 	}
-
+	
+	printf("If your information is nonsensical the system has been locked") 
+	printf(" by the administrator\n");
 	do { printStuMenu(&choice);
         switch (choice){
             case 1: printStuTimetable(currentStu.number,AllCourses,CoursesAMT); 
@@ -197,7 +202,8 @@ int studentMain(void){
             		/* update currentStu after editing of details */
             		checkStuNum(currentStu.number,studentListp,&currentStu); 
             		break;
-            case 4: saveStudentList(studentListp); break;
+            case 4: saveStudentList(studentListp); 
+            		EncryptDecrypt (STUDENTS_FILE, 0); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 4);
 	return 0;
@@ -293,11 +299,26 @@ void printStuDetails(student_t student){
  * OUT: 0 if successful
 ******************************************************************************/
 int adminMain(void){
-	int choice;	course_t AllCourses[MAX_COURSES_AMT]; int CoursesAMT = 0;
-	studentNode_t* studentListp; studentListp = NULL;
-
 	/* Load necessary information from local files */
+	int choice;
+	char lock;
+	course_t AllCourses[MAX_COURSES_AMT];
+	int CoursesAMT = 0;
+	studentNode_t* studentListp;
+	studentListp = NULL;
 	loadCourse(AllCourses, &CoursesAMT);
+	
+	printf("Is the system locked\nEnter y or n\n");
+	scanf("%c",lock);
+	if ((int)lock==101 || (int)lock==78)
+	{
+		EncryptDecrypt(STUDENTS_FILE, 1);
+	}
+	else
+	{
+		EncryptDecrypt(STUDENTS_FILE, 3);
+	}
+	
 	loadStudentList(&studentListp);
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
 
@@ -312,10 +333,40 @@ int adminMain(void){
 	    	case 7: printEnrollment(AllCourses, CoursesAMT); break;
 	    	case 8: addCourse(AllCourses, &CoursesAMT); break;
 	    	case 9: EnrollAStudent(studentListp, AllCourses, CoursesAMT);
+	    		break;
+	    	case 10: DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
+	    		break;
+	    	case 11:
+	    	printf("Do you wish to lock the system?\nEnter y or n\n");
+	    	scanf("%c",&lock);
+	    	if(sort(studentListp)==1)
+	    	{
+	    		saveStudentList(studentListp->nextp); 
+	    		if ((int)lock==101 || (int)lock==78)
+	    		{
+	    			EncryptDecrypt(STUDENTS_FILE, 0);
 	    			break;
-	    	case 10:DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
+	    		}
+	    		else
+	    		{
+	    			EncryptDecrypt(STUDNETS_FILE, 2);
 	    			break;
-	    	case 11:saveStudentList(studentListp); break;
+	    		}
+	    	}
+	    	else
+	    	{
+	    		saveStudentList(studentListp); 
+	    		if ((int)lock==101 || (int)lock==78)
+	    		{
+	    			EncryptDecrypt(STUDENTS_FILE, 0);
+	    			break;
+	    		}
+	    		else
+	    		{
+	    			EncryptDecrypt(STUDNETS_FILE, 2);
+	    			break;
+	    		}
+	    	}
             default: printf("Invalid choice\n");} 
     } while (choice != 11);
 	return 0;
@@ -413,9 +464,7 @@ void getName(student_t* stup){
 ******************************************************************************/
 void getNumber(student_t* stup){
 	int temp;
-	
 	/*Loop asking the user for a student number, until a valid one is entered*/
-	do { printf("Enter student number> ");
 		scanf("%d", &temp);
 
 		if (!validStuNum(temp)){
@@ -554,15 +603,20 @@ int validPhoneNumber(long phoneNum){
 int removeStu(studentNode_t** head){
 	student_t stu = getStu(*head); studentNode_t* current = *head;
 	studentNode_t* previous = NULL;	studentNode_t* next_node = NULL;
+	student_t stu = getStu(*head);
+	studentNode_t* current = *head;
+	studentNode_t* previous = NULL;
+	studentNode_t* next_node = NULL;
 
 	/* Loops through linked list of students until the correct one has been 
 		found, after which it is removed from the linked list */
 	while (current!=NULL){
-		if (stu.number == current->stu.number) {
+		if (stu.number == current->stu.number){
 			if (previous == NULL){
 				next_node = (*head)->nextp;
 				free(*head);
 				*head = next_node;
+				return 0;
 			} else if (current->nextp==NULL){
 				free(current->nextp);
 				previous->nextp=NULL;
@@ -1140,7 +1194,8 @@ int addCourse(course_t AllCourses[], int* CoursesAMT)
  * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int saveStudentList(studentNode_t* head){
-	FILE* fp = NULL; fp = fopen(STUDENTS_FILE, "w");
+	FILE* fp = NULL;
+    fp = fopen(STUDENTS_FILE, "w");
 
 	/* check if file has been opened correctly before writing */
     if (fp == NULL){
@@ -1182,21 +1237,16 @@ int saveStudentList(studentNode_t* head){
  * OUT: 0 if successful, 1 if unsuccessful
 ******************************************************************************/
 int loadStudentList(studentNode_t** head){
-	FILE* fp = NULL; char line[10]; fp = fopen(STUDENTS_FILE, "r"); 
-	char firstdatapoint = 1;
+	FILE* fp = NULL; char line[10];
+    fp = fopen(STUDENTS_FILE, "r");
+    char firstdatapoint = 1;
 
 	/* check if file has been opened correctly before reading */
     if (fp == NULL){
         printf("Read error\n");
         return 1;
     }
-    
-    /* left over from huffman
-    fclose(fp);
-    
-    fp = fopen(STUDENTS_FILE, "r");
-	*/
-	
+
     *head = (studentNode_t*) malloc(sizeof(studentNode_t));
     studentNode_t* current = *head;
     studentNode_t* previous = NULL;
@@ -1474,3 +1524,84 @@ int saveEnrollments(course_t AllCourses[], int CoursesAMT)
 
     return 0;
 }
+
+/******************************************************************************
+ * Bubble Sort
+ * Author: Michael
+ * IN: The head of the student list
+ * OUT: 1 if a change was made to the order (as the head needs to be moved 
+ * past the null student_t added)
+******************************************************************************/
+int sort(studentNode_t* head)
+{
+	int i, j, k, change;
+	int stu_amount = stuAmount(head);
+	student_t stu_temp;
+	
+	strcpy (stu_temp.firstname,"default");
+	
+	#ifdef DEBUG 
+	printf("Sorting started\n");
+	printf("%d students found\n",stu_amount);
+	#endif
+	
+	studentNode_t* current = head;
+	studentNode_t* previous = NULL;
+	
+	for (i=MAX_NAME_LEN; i>=0; i--)
+	{
+		#ifdef DEBUG
+		printf("\n\ni=%d",i);
+		#endif
+		for(j=0; j<stu_amount-1; j++)
+		{
+			current = head;
+			previous = NULL;
+			#ifdef DEBUG
+			printf("\nj=%d ",j);
+			#endif
+			for (k=0; k<stu_amount-1; k++)
+			{
+				#ifdef DEBUG
+				printf("k=%d",k);
+				#endif
+				previous = current;
+				current = current->nextp;
+				#ifdef DEBUG
+				printf(" c=%d p=%d",current->stu.firstname[i], 
+						previous->stu.firstname[i]);
+				#endif
+				if (current->stu.firstname[i] < previous->stu.firstname[i])
+				{
+					change = 1;
+					stu_temp = current->stu;
+					current->stu = previous->stu;
+					previous->stu = stu_temp;
+				}
+			}
+		}
+	}
+	current = head;
+	previous = NULL;
+	return change;
+}
+
+/******************************************************************************
+ * Checks the amount of students in the linked list
+ * Author: Michael
+ * IN: The head of the student list
+ * OUT: The number of studentNode_t's
+******************************************************************************/
+int stuAmount (studentNode_t* head)
+{
+	int i = 0;
+	studentNode_t* current;
+	
+	for (current = head; current!=NULL; 
+		 current = current->nextp)
+	{
+		i++;
+	}
+	return i;
+}
+
