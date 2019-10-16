@@ -1166,8 +1166,6 @@ int saveStudentList(studentNode_t* head){
 
     fclose(fp);
 
-    HuffmanCompression(STUDENTS_FILE);
-
     #ifdef DEBUG
 		printf("DEBUG: Student list succesfully saved to %s\n",
 			STUDENTS_FILE);
@@ -1192,11 +1190,13 @@ int loadStudentList(studentNode_t** head){
         printf("Read error\n");
         return 1;
     }
-
+    
+    /* left over from huffman
     fclose(fp);
-    HuffmanDecompression(STUDENTS_FILE,CODE_FILE);
+    
     fp = fopen(STUDENTS_FILE, "r");
-
+	*/
+	
     *head = (studentNode_t*) malloc(sizeof(studentNode_t));
     studentNode_t* current = *head;
     studentNode_t* previous = NULL;
@@ -1356,7 +1356,11 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
 
     FILE* database = NULL;
     database = fopen(ENROLLMENTS_FILE, "r");
- 
+ 	/* HuffmanDecompression(ENROLLMENT_FILE,CODE_FILE);
+ 	fclose(database); */
+
+ 	database = fopen(ENROLLMENTS_FILE, "r");
+
     if (database != NULL)
     {
          
@@ -1465,6 +1469,8 @@ int saveEnrollments(course_t AllCourses[], int CoursesAMT)
     }
 
     fclose(database);
+
+    /* HuffmanCompression(ENROLLMENTS_FILE); */
 
     return 0;
 }
