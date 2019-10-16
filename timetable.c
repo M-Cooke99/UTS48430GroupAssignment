@@ -191,7 +191,7 @@ int studentMain(void){
 		checkPassword(currentStu);
 	}
 	
-	printf("If your information is nonsensical the system has been locked") 
+	printf("If your information is nonsensical the system has been locked");
 	printf(" by the administrator\n");
 	do { printStuMenu(&choice);
         switch (choice){
@@ -309,7 +309,7 @@ int adminMain(void){
 	loadCourse(AllCourses, &CoursesAMT);
 	
 	printf("Is the system locked\nEnter y or n\n");
-	scanf("%c",lock);
+	scanf("%c",&lock);
 	if ((int)lock==101 || (int)lock==78)
 	{
 		EncryptDecrypt(STUDENTS_FILE, 1);
@@ -349,7 +349,7 @@ int adminMain(void){
 	    		}
 	    		else
 	    		{
-	    			EncryptDecrypt(STUDNETS_FILE, 2);
+	    			EncryptDecrypt(STUDENTS_FILE, 2);
 	    			break;
 	    		}
 	    	}
@@ -363,7 +363,7 @@ int adminMain(void){
 	    		}
 	    		else
 	    		{
-	    			EncryptDecrypt(STUDNETS_FILE, 2);
+	    			EncryptDecrypt(STUDENTS_FILE, 2);
 	    			break;
 	    		}
 	    	}
@@ -465,7 +465,7 @@ void getName(student_t* stup){
 void getNumber(student_t* stup){
 	int temp;
 	/*Loop asking the user for a student number, until a valid one is entered*/
-		scanf("%d", &temp);
+	do { scanf("%d", &temp);
 
 		if (!validStuNum(temp)){
 			printf("Invalid student number.\n");
@@ -603,10 +603,6 @@ int validPhoneNumber(long phoneNum){
 int removeStu(studentNode_t** head){
 	student_t stu = getStu(*head); studentNode_t* current = *head;
 	studentNode_t* previous = NULL;	studentNode_t* next_node = NULL;
-	student_t stu = getStu(*head);
-	studentNode_t* current = *head;
-	studentNode_t* previous = NULL;
-	studentNode_t* next_node = NULL;
 
 	/* Loops through linked list of students until the correct one has been 
 		found, after which it is removed from the linked list */

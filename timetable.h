@@ -9,6 +9,7 @@
 #include <stdlib.h> /* malloc, free */
 #include <math.h>
 #include "huffman.h" /* HuffmanCompression, HuffmanDecompression */
+#include "Encrypt.h" /* EncryptDecrypt */
 
 
 /******************************************************************************
