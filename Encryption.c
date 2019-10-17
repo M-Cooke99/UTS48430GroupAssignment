@@ -231,11 +231,25 @@ void getPassSeq (int file_len, char pass_seq[], char pass[],
 		for (j=0; j<pass_len; j++)
 		{
 			pass_seq[i*pass_len+j] = pass[j] + i;
+			/*
+			for (j>*pass_len)
+			{
+				pass[j] = pass[j] + pass_seq[j-*pass_len];
+			}
+			pass_seq[i*pass_len+j] = pass[j]
+			*/
 		}
 	}
 	for (j=0; j<remainder; j++)
 	{
 		pass_seq[multi*pass_len+j] = pass[j] + i;
+			/*
+			for (j>*pass_len)
+			{
+				pass[j] = pass[j] + pass_seq[j-*pass_len];
+			}
+			pass_seq[multi*pass_len+j] = pass[j]
+			*/
 	}
 	if (mode == 4)
 	{
