@@ -1,0 +1,33 @@
+
+100 Mathematics          
+Lec 1:          12345678        87654321        10293847
+Lec 2:          16038955        21277722
+Lab 1:
+Lab 2:
+Tut 1:
+Tut 2:
+
+101 Finance
+Lec 1:
+Lec 2:
+Lab 1:
+Lab 2:
+Tut 1:
+Tut 2:
+
+102 Art          
+Lec 1:          10293847
+Lec 2:
+Lab 1:
+Lab 2:
+Tut 1:
+Tut 2:
+
+103 Biology
+Lec 1:
+Lec 2:
+Lab 1:
+Lab 2:
+Tut 1:
+Tut 2:
+          
