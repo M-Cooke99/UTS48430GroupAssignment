@@ -164,8 +164,8 @@ int studentMain(void){
 	course_t AllCourses[MAX_COURSES_AMT];
 	int CoursesAMT = 0;
 	loadCourse(AllCourses, &CoursesAMT);
+	EncryptDecrypt(COURSES_FILE,1);
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
-	EncryptDecrypt (STUDENTS_FILE, 1);
 	loadStudentList(&studentListp); 
 
 	/* Makes login easier during programming */
@@ -203,7 +203,7 @@ int studentMain(void){
             		checkStuNum(currentStu.number,studentListp,&currentStu); 
             		break;
             case 4: saveStudentList(studentListp); 
-            		EncryptDecrypt (STUDENTS_FILE, 0); break;
+					EncryptDecrypt(COURSES_FILE, 0); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 4);
 	return 0;
@@ -312,11 +312,11 @@ int adminMain(void){
 	scanf("%c",&lock);
 	if ((int)lock==101 || (int)lock==78)
 	{
-		EncryptDecrypt(STUDENTS_FILE, 1);
+		EncryptDecrypt(COURSES_FILE, 1);
 	}
 	else
 	{
-		EncryptDecrypt(STUDENTS_FILE, 3);
+		EncryptDecrypt(COURSES_FILE, 3);
 	}
 	
 	loadStudentList(&studentListp);
@@ -344,12 +344,12 @@ int adminMain(void){
 	    		saveStudentList(studentListp->nextp); 
 	    		if ((int)lock==101 || (int)lock==78)
 	    		{
-	    			EncryptDecrypt(STUDENTS_FILE, 0);
+	    			EncryptDecrypt(COURSES_FILE, 0);
 	    			break;
 	    		}
 	    		else
 	    		{
-	    			EncryptDecrypt(STUDENTS_FILE, 2);
+	    			EncryptDecrypt(COURSES_FILE, 2);
 	    			break;
 	    		}
 	    	}
@@ -358,12 +358,12 @@ int adminMain(void){
 	    		saveStudentList(studentListp); 
 	    		if ((int)lock==101 || (int)lock==78)
 	    		{
-	    			EncryptDecrypt(STUDENTS_FILE, 0);
+	    			EncryptDecrypt(COURSES_FILE, 0);
 	    			break;
 	    		}
 	    		else
 	    		{
-	    			EncryptDecrypt(STUDENTS_FILE, 2);
+	    			EncryptDecrypt(COURSES_FILE, 2);
 	    			break;
 	    		}
 	    	}
