@@ -1402,14 +1402,14 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
 
     FILE* database = NULL;
     database = fopen(ENROLLMENTS_FILE, "r");
- 	/* HuffmanDecompression(ENROLLMENT_FILE, CODE_FILE);
- 	fclose(database); */
-
- 	database = fopen(ENROLLMENTS_FILE, "r");
 
     if (database != NULL)
     {
-         
+ 	
+ 		/* fclose(database);
+ 		HuffmanDecompression(ENROLLMENT_FILE, CODE_FILE);
+ 		database = fopen(ENROLLMENTS_FILE, "r"); */
+
         for(i=0;  i<CoursesAMT; i++)
         {
         	fgets(line, 10, database);
