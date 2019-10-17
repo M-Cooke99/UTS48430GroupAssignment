@@ -68,7 +68,9 @@ The functional part of the program is symmetric hence this can be used for eithe
 void EncryptDecrypt (char file_name[], int mode)
 {
 	char pass[MAX_PASS_LEN];
-	int pass_len, i, multi;
+	int pass_len = 0;
+    int i = 0;
+    int multi = 0;
 	int file_len = getFilelen(file_name, mode);
 	char file_seq[file_len], pass_seq[file_len], out_seq[file_len];
 	getFileSeq(file_seq, file_name, file_len, mode);
