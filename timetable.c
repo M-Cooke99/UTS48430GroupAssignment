@@ -1495,11 +1495,11 @@ int saveEnrollments(course_t AllCourses[], int CoursesAMT)
             /*Saves each course slot infos*/
             for(j=0; j < SLOT_NUM; j++)
             {
-            	fprintf(database, "%s %d:\t",
+            	fprintf(database, "%s %d: ",
             		AllCourses[i].slot_a[j].type, AllCourses[i].slot_a[j].group);
             	for(k = 0; k<AllCourses[i].slot_a[j].StudentAMT; k++)
             	{
-            		fprintf(database, "\t%d", AllCourses[i].slot_a[j].studentEn[k]);
+            		fprintf(database, " %d", AllCourses[i].slot_a[j].studentEn[k]);
             	}
             	fprintf(database, " \n");
             }
