@@ -1402,7 +1402,7 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
 
     FILE* database = NULL;
     database = fopen(ENROLLMENTS_FILE, "r");
- 	/* HuffmanDecompression(ENROLLMENT_FILE,CODE_FILE);
+ 	/* HuffmanDecompression(ENROLLMENT_FILE, CODE_FILE);
  	fclose(database); */
 
  	database = fopen(ENROLLMENTS_FILE, "r");
@@ -1480,6 +1480,11 @@ int saveEnrollments(course_t AllCourses[], int CoursesAMT)
 
     if (database != NULL)
     {
+
+    	/* fclose(database);
+		HuffmanCompression(ENROLLMENTS_FILE);
+    	database = fopen(ENROLLMENTS_FILE, "w"); */
+
         for(i=0; i < CoursesAMT; i++)
         {
         	fprintf(database, " \n");
@@ -1515,8 +1520,6 @@ int saveEnrollments(course_t AllCourses[], int CoursesAMT)
     }
 
     fclose(database);
-
-    /* HuffmanCompression(ENROLLMENTS_FILE); */
 
     return 0;
 }
