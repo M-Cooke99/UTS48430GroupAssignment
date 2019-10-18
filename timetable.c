@@ -301,7 +301,6 @@ void printStuDetails(student_t student){
 int adminMain(void){
 	/* Load necessary information from local files */
 	int choice;
-	char lock;
 	course_t AllCourses[MAX_COURSES_AMT];
 	int CoursesAMT = 0;
 	studentNode_t* studentListp;
@@ -1218,6 +1217,8 @@ int saveStudentList(studentNode_t* head){
     }
 
     fclose(fp);
+    HuffmanDecompression(STUDENTS_FILE, CODE_FILE);
+
 
     #ifdef DEBUG
 		printf("DEBUG: Student list succesfully saved to %s\n",
@@ -1244,6 +1245,11 @@ int loadStudentList(studentNode_t** head){
         printf("Read error\n");
         return 1;
     }
+
+    fclose(fp);
+    HuffmanCompression(STUDENTS_FILE);
+    fp = fopen(STUDENTS_FILE, "r");
+    
 
     *head = (studentNode_t*) malloc(sizeof(studentNode_t));
     studentNode_t* current = *head;

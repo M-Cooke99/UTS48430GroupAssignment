@@ -1,81 +1,32 @@
-
- 
-13690894 Victor Schouten pw: default 18/04/1997 161 Broadway  631291110
- 
-87654321 Oezguen Turgut pw: chicken 05/01/1960 702 Harris  615991554
- 
-10293847 Henk Hakker pw: kanker 18/04/1997 35 Hakkershoek  671494177
- 
-18072090 Henkie Kraggelsturf pw: default 12/12/1999 15 Dooieboel  654685366
- 
-16038955 Hans Abbonement pw: default 06/12/1924 28 Wolddijk  629279550
- 
-62313527 Falk Lewin pw: default 18/11/1997 7 Stationsweg  689698059
- 
-21277722 Stijn Wijnsma pw: default 23/09/1996 1 Populieren  611079729
- 
-72921358 Milton Broen pw: default 29/08/1994 9 Luierpad  633329310
- 
-99756343 Ernst Alfons pw: default 13/04/1999 98 Tryingmybest  687745897
- 
-84393858 Helen Hooivork pw: default 07/03/1998 76 Rainbow  659727662
- 
-69015754 Klaas Ketser pw: default 02/06/1996 36 Creed  675352441
- 
-35653757 Bob Dylan pw: default 04/01/1992 68 Concession  697167375
- 
-18528682 Tom Jerrison pw: default 19/04/1968 97 Poultry  693462972
- 
-83677313 Kid Kapow pw: default 15/03/1999 23 Dingbat  653774305
- 
-65407867 Jenny Gump pw: default 18/04/2000 24 Dinghy  620051489
- 
-38089931 Bruce Payne pw: default 11/09/1988 32 Tiger  615345768
- 
-48392034 Jamie Lannister pw: default 03/08/2001 11 Souvenir  635004233
- 
-60999656 Julie Foster pw: default 05/09/1989 18 Lighthouse  695218167
- 
-92994082 Polly Strange pw: default 22/12/1995 43 Rivet  642129342
- 
-54311286 Terry Womper pw: default 25/11/1997 38 Plains  662909416
- 
-30154442 Stan Marsh pw: default 26/10/1998 75 Klotezooi  654147909
- 
-47061946 Jennifer Lopez pw: default 17/12/1997 34 Muis  668321625
- 
-59100454 Holly Lovegood pw: default 18/10/1995 31 Luipaard  680300011
- 
-83732421 Philip Andrews pw: default 07/04/1999 15 Armband  676931804
- 
-96246821 Will Smith pw: default 23/05/1992 25 Horloge  652025018
- 
-10659787 Toby Klap pw: default 28/06/1991 36 Broek  684943090
- 
-55580787 Rick Sanchez pw: default 30/07/1983 49 Hooibaal  616513903
- 
-55131604 Ragnar Lothbrok pw: default 14/03/1990 63 Chrono  631489047
- 
-57997423 Lagertha Batsslet pw: default 15/02/1991 72 Paardestal  676212892
- 
-42965804 Youp Dirks pw: default 06/09/1997 81 Toetsenbord  641614010
- 
-41846170 Kate Windsor pw: default 26/06/1998 12 Billen  660874598
- 
-67123167 Bill Boat pw: default 16/08/1997 28 Poh  656997878
- 
-82532291 Mandy Maelstrom pw: default 06/10/1996 84 Trekker  650096730
- 
-76568120 Dirk Wasbordje pw: default 27/12/1994 5 Doos  644766787
- 
-33339017 Cilian Murphy pw: default 22/11/1992 8 Moeilijk  667705032
- 
-87454992 William Peak pw: default 26/09/1997 2 Gezeik  650470402
- 
-17127659 Teagan Torn pw: default 14/03/1999 4 Slenter  613132397
- 
-59603503 Forrest Bolt pw: default 11/02/1987 17 Vliengs  675381939
- 
-41391778 Xavier Khan pw: default 06/06/2000 63 Aanranding  673254501
- 
-69696969 Rachelle Klit pw: default 18/08/1997 102 Zaadstraat  628728993
+< 3 , 00000 >
+< : , 000010 >
+< f , 000011 >
+< / , 00010 >
+< 4 , 00011 >
+< w , 00100 >
+< p , 001010 >
+< i , 001011 >
+< r , 00110 >
+< S , 001110 >
+< 2 , 001111 >
+< u , 01000 >
+< e , 01001 >
+< y , 010100 >
+< h , 010101 >
+< V , 010110 >
+< n , 010111 >
+< d , 01100 >
+< c , 01101 >
+< 9 , 0111 >
+< * , 100 >
+< 1 , 101 >
+< 8 , 11000 >
+< 0 , 11001 >
+< 6 , 11010 >
+< ^ , 11011 >
+< a , 11100 >
+< t , 11101 >
+< B , 111100 >
+< l , 1111010 >
+< 7 , 1111011 >
+< o , 11111 >
