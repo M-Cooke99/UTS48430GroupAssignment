@@ -17,15 +17,15 @@ The functional part of the program is symmetric hence this can be used for eithe
 /******************************************************************************
 * MAIN - incase this is to be run stand-alone
 ******************************************************************************/
-int main (int argc, char* argv[]) 
+/*int main (int argc, char* argv[]) 
 {
-	/*Check a file and run_mode have been entered*/
+	Check a file and run_mode have been entered
 	 if (argc < 2)
 	{
 		printf("Incorrect format\n");
 		printf("Correct is %s runmode argument_file\n",argv[0]);
 	} 
-	/*Enter correct runmode*/
+	Enter correct runmode
 	else if (strcmp(argv[1],"-e") == 0)
 	{
 		char* input_file = argv[2];
@@ -50,8 +50,8 @@ int main (int argc, char* argv[])
 	{
 		char* input_file = argv[2];
 		EncryptDecrypt(input_file, 4);
-	} */
-	/*Incase of invalid entry*/
+	} 
+	Incase of invalid entry
 	else
 	{
 		printf("Please enter -e to encrypt or -d to decrypt\n");
@@ -59,7 +59,7 @@ int main (int argc, char* argv[])
 	}
 	return 0;
 }
-
+*/
 /******************************************************************************
 * Description: Allocates to other functions and initiates main varaibles
 * IN: A file to encrypt/decrypt and a runmode(see top)
