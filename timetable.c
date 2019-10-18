@@ -307,7 +307,7 @@ int adminMain(void){
 	studentNode_t* studentListp;
 	studentListp = NULL;
 		
-	printf("Is the system locked\nEnter y or n\n");
+	/*printf("Is the system locked\nEnter y or n\n");
 	scanf("%c",&lock);
 	if ((int)lock==78 || (int)lock==110)
 	{
@@ -316,7 +316,7 @@ int adminMain(void){
 	else
 	{
 		EncryptDecrypt(STUDENTS_FILE, 3);
-	}
+	}*/
 	
 	loadCourse(AllCourses, &CoursesAMT);
 	loadStudentList(&studentListp);
@@ -338,12 +338,12 @@ int adminMain(void){
 	    	case 10: DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
 	    		break;
 	    	case 11:
-	    	printf("Do you wish to lock the system?\nEnter y or n\n");
-	    	scanf("%c",&lock);
+	    	/*printf("Do you wish to lock the system?\nEnter y or n\n");
+	    	scanf("%c",&lock);*/
 	    	if(sort(studentListp)==1)
 	    	{
 	    		saveStudentList(studentListp->nextp); 
-	    		if ((int)lock==110 || (int)lock==78)
+	    		/*if ((int)lock==110 || (int)lock==78)
 	    		{
 	    			EncryptDecrypt(STUDENTS_FILE, 0);
 	    			break;
@@ -352,12 +352,12 @@ int adminMain(void){
 	    		{
 	    			EncryptDecrypt(STUDENTS_FILE, 2);
 	    			break;
-	    		}
+	    		}*/
 	    	}
 	    	else
 	    	{
 	    		saveStudentList(studentListp); 
-	    		if ((int)lock==101 || (int)lock==78)
+	    		/*if ((int)lock==101 || (int)lock==78)
 	    		{
 	    			EncryptDecrypt(STUDENTS_FILE, 0);
 	    			break;
@@ -366,7 +366,7 @@ int adminMain(void){
 	    		{
 	    			EncryptDecrypt(STUDENTS_FILE, 2);
 	    			break;
-	    		}
+	    		}*/
 	    	}
             default: printf("Invalid choice\n");} 
     } while (choice != 11);
