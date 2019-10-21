@@ -163,7 +163,7 @@ int studentMain(void){
 	studentListp = NULL;
 	course_t AllCourses[MAX_COURSES_AMT];
 	int CoursesAMT = 0;
-	EncryptDecrypt(COURSES_FILE,1);
+	/* EncryptDecrypt(COURSES_FILE,1); */
 	loadCourse(AllCourses, &CoursesAMT);
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
 	loadStudentList(&studentListp); 
@@ -191,8 +191,8 @@ int studentMain(void){
 		checkPassword(currentStu);
 	}
 	
-	printf("If your information is nonsensical the system has been locked");
-	printf(" by the administrator\n");
+	/* printf("If your information is nonsensical the system has been locked"
+			" by the administrator\n"); */
 	do { printStuMenu(&choice);
         switch (choice){
             case 1: printStuTimetable(currentStu.number,AllCourses,CoursesAMT); 
@@ -1397,9 +1397,6 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
 
     if (database != NULL)
     {
- 		/* fclose(database);
- 		HuffmanDecompression(ENROLLMENT_FILE, CODE_FILE);
- 		database = fopen(ENROLLMENTS_FILE, "r"); */
         for(i=0;  i<CoursesAMT; i++)
         {
         	fgets(line, 10, database);
@@ -1469,11 +1466,6 @@ int saveEnrollments(course_t AllCourses[], int CoursesAMT)
 
     if (database != NULL)
     {
-
-    	/* fclose(database);
-		HuffmanCompression(ENROLLMENTS_FILE);
-    	database = fopen(ENROLLMENTS_FILE, "w"); */
-
         for(i=0; i < CoursesAMT; i++)
         {
         	fprintf(database, " \n");
