@@ -1217,7 +1217,7 @@ int saveStudentList(studentNode_t* head){
     }
 
     fclose(fp);
-    HuffmanDecompression(STUDENTS_FILE, CODE_FILE);
+    HuffmanCompression(STUDENTS_FILE);
 
 
     #ifdef DEBUG
@@ -1247,7 +1247,7 @@ int loadStudentList(studentNode_t** head){
     }
 
     fclose(fp);
-    HuffmanCompression(STUDENTS_FILE);
+    HuffmanDecompression(STUDENTS_FILE, CODE_FILE);
     fp = fopen(STUDENTS_FILE, "r");
     
 
