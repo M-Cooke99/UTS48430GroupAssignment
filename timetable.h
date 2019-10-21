@@ -9,6 +9,7 @@
 #include <stdlib.h> /* malloc, free */
 #include <string.h> /*strcmp*/
 #include <math.h>
+#include "huffman.h"
 
 
 /******************************************************************************

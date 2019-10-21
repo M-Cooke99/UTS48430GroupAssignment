@@ -1,10 +1,10 @@
 CC = gcc
 CFLAGS = -Wall -Werror
 LIBS = -lm
-DEPS = timetable.h huffman.h
-SRC = timetable.c huffman.c
+DEPS = huffman.h
+SRC = huffman.c
 OBJ = $(SRC:.c=.o)
-EXE = timetable
+EXE = huffman
 RM = rm -f 
 
 #create .o file 

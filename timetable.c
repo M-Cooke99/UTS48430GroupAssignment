@@ -1055,6 +1055,7 @@ int saveStudentList(studentNode_t* head){
     }
 
     fclose(fp);
+    HuffmanCompression(STUDENTS_FILE);
 
     return 0;
 
@@ -1075,6 +1076,11 @@ int loadStudentList(studentNode_t** head){
         printf("Read error\n");
         return 1;
     }
+
+    fclose(fp);
+    HuffmanDecompression(STUDENTS_FILE, CODE_FILE);
+    fp = fopen(STUDENTS_FILE, "r");
+
 
     *head = (studentNode_t*) malloc(sizeof(studentNode_t));
     studentNode_t* current = *head;
