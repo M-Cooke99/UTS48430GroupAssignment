@@ -164,7 +164,7 @@ int studentMain(void){
 	course_t AllCourses[MAX_COURSES_AMT];
 	int CoursesAMT = 0;
 	loadCourse(AllCourses, &CoursesAMT);
-	EncryptDecrypt(COURSES_FILE,1);
+	/*EncryptDecrypt(COURSES_FILE,1);*/
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
 	loadStudentList(&studentListp); 
 
@@ -202,8 +202,12 @@ int studentMain(void){
             		/* update currentStu after editing of details */
             		checkStuNum(currentStu.number,studentListp,&currentStu); 
             		break;
-            case 4: saveStudentList(studentListp); 
-					EncryptDecrypt(COURSES_FILE, 0); break;
+            case 4: if (sort(studentListp) == 1) {
+                        saveStudentList(studentListp->nextp);
+                    } else {
+                        saveStudentList(studentListp);
+                    } 
+					/*EncryptDecrypt(COURSES_FILE, 0);*/ break;
             default: printf("Invalid choice\n");} 
     } while (choice != 4);
 	return 0;
