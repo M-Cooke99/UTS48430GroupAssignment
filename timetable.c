@@ -163,7 +163,7 @@ int studentMain(void){
 	studentListp = NULL;
 	course_t AllCourses[MAX_COURSES_AMT];
 	int CoursesAMT = 0;
-	/* EncryptDecrypt(COURSES_FILE,1); */
+	EncryptDecrypt(COURSES_FILE,1);
 	loadCourse(AllCourses, &CoursesAMT);
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
 	loadStudentList(&studentListp); 
