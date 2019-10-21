@@ -163,8 +163,8 @@ int studentMain(void){
 	studentListp = NULL;
 	course_t AllCourses[MAX_COURSES_AMT];
 	int CoursesAMT = 0;
+	EncryptDecrypt(COURSES_FILE,1);
 	loadCourse(AllCourses, &CoursesAMT);
-	/*EncryptDecrypt(COURSES_FILE,1);*/
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
 	loadStudentList(&studentListp); 
 
@@ -202,12 +202,8 @@ int studentMain(void){
             		/* update currentStu after editing of details */
             		checkStuNum(currentStu.number,studentListp,&currentStu); 
             		break;
-            case 4: if (sort(studentListp) == 1) {
-                        saveStudentList(studentListp->nextp);
-                    } else {
-                        saveStudentList(studentListp);
-                    } 
-					/*EncryptDecrypt(COURSES_FILE, 0);*/ break;
+            case 4: saveStudentList(studentListp); 
+					EncryptDecrypt(COURSES_FILE, 0); break;
             default: printf("Invalid choice\n");} 
     } while (choice != 4);
 	return 0;
@@ -304,28 +300,29 @@ void printStuDetails(student_t student){
 ******************************************************************************/
 int adminMain(void){
 	/* Load necessary information from local files */
-	int choice;
+	int choice, buffer;
 	course_t AllCourses[MAX_COURSES_AMT];
 	int CoursesAMT = 0;
 	studentNode_t* studentListp;
 	studentListp = NULL;
-		
-	/*printf("Is the system locked\nEnter y or n\n");
+	
+	char lock;
+	printf("Is the system locked\nEnter y or n\n");
 	scanf("%c",&lock);
+
 	if ((int)lock==78 || (int)lock==110)
 	{
-		EncryptDecrypt(STUDENTS_FILE, 1);
+		EncryptDecrypt(COURSES_FILE, 1);
 	}
 	else
-	{
-		EncryptDecrypt(STUDENTS_FILE, 3);
-	}*/
+	{	
+		EncryptDecrypt(COURSES_FILE, 3);
+	}
 	
 	loadCourse(AllCourses, &CoursesAMT);
 	loadStudentList(&studentListp);
 	loadEnrollments(AllCourses, CoursesAMT, studentListp);
 
-	printf("do\n");
 	do { printAdminMenu(&choice);
         switch (choice){
             case 1: addStu(&studentListp); break;
@@ -341,35 +338,18 @@ int adminMain(void){
 	    	case 10: DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
 	    		break;
 	    	case 11:
-	    	/*printf("Do you wish to lock the system?\nEnter y or n\n");
-	    	scanf("%c",&lock);*/
-	    	if(sort(studentListp)==1)
+	    	printf("Do you wish to lock the system?\nEnter y or n\n");
+	    	scanf("%d %c",&buffer, &lock);
+	    	sort(studentListp);
+	    	if ((int)lock==110 || (int)lock==78)
 	    	{
-	    		saveStudentList(studentListp->nextp); 
-	    		/*if ((int)lock==110 || (int)lock==78)
-	    		{
-	    			EncryptDecrypt(STUDENTS_FILE, 0);
-	    			break;
-	    		}
-	    		else
-	    		{
-	    			EncryptDecrypt(STUDENTS_FILE, 2);
-	    			break;
-	    		}*/
-	    	}
-	    	else
-	    	{
-	    		saveStudentList(studentListp); 
-	    		/*if ((int)lock==101 || (int)lock==78)
-	    		{
-	    			EncryptDecrypt(STUDENTS_FILE, 0);
-	    			break;
-	    		}
-	    		else
-	    		{
-	    			EncryptDecrypt(STUDENTS_FILE, 2);
-	    			break;
-	    		}*/
+	    		EncryptDecrypt(COURSES_FILE, 0);
+	   			break;
+	   		}
+	   		else
+	   		{
+    			EncryptDecrypt(COURSES_FILE, 2);	    			
+    			break;
 	    	}
             default: printf("Invalid choice\n");} 
     } while (choice != 11);
@@ -958,7 +938,7 @@ int loadCourse(course_t AllCourses[], int* CoursesAMT)
         return 1;
     }
     
-    *CoursesAMT = i;
+    *CoursesAMT = i-1;
     return 0;
 }
 
@@ -1417,11 +1397,9 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
 
     if (database != NULL)
     {
- 	
  		/* fclose(database);
  		HuffmanDecompression(ENROLLMENT_FILE, CODE_FILE);
  		database = fopen(ENROLLMENTS_FILE, "r"); */
-
         for(i=0;  i<CoursesAMT; i++)
         {
         	fgets(line, 10, database);
@@ -1473,7 +1451,6 @@ int loadEnrollments(course_t AllCourses[], int CoursesAMT, studentNode_t* head)
 		#endif
         return 1;
     }
-    
     return 0;
 }
 

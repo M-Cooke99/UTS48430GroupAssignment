@@ -1,3 +1,4 @@
+
  
 100 Mathematics - Lecturer: Doris_Wilson
 Lec 1: mon 08:00 to mon 10:00 - CB10.00.001 - Doris_Wilson
@@ -30,3 +31,4 @@ Lab 1: tue 08:00 to tue 09:30 - CB06.08.004 - Kavan_Whitaker
 Lab 2: thu 09:00 to thu 10:30 - CB06.05.235 - Bert_Kemp
 Tut 1: mon 10:00 to fri 11:00 - CB03.05.100 - Kavan_Whitake
 Tut 2: fri 19:00 to fri 20:00 - CB03.02.200 - Jarred_Alfaro
+ 
