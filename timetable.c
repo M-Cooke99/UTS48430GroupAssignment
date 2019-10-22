@@ -307,7 +307,7 @@ int adminMain(void){
 	studentListp = NULL;
 	
 	char lock;
-	printf("Is the system locked\nEnter y or n\n");
+	printf("Is the system locked\nEnter y or n> ");
 	scanf("%c",&lock);
 
 	if ((int)lock==78 || (int)lock==110)
@@ -338,7 +338,7 @@ int adminMain(void){
 	    	case 10: DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
 	    		break;
 	    	case 11: saveStudentList(studentListp);
-	    	printf("Do you wish to lock the system?\nEnter y or n\n");
+	    	printf("Do you wish to lock the system?\nEnter y or n> ");
 	    	scanf("%d %c",&buffer, &lock);
 	    	sort(studentListp);
 	    	if ((int)lock==110 || (int)lock==78)
@@ -449,6 +449,8 @@ void getName(student_t* stup){
 ******************************************************************************/
 void getNumber(student_t* stup){
 	int temp;
+	
+	printf("Enter a student number consisting of 8 digits> ");
 	/*Loop asking the user for a student number, until a valid one is entered*/
 	do { scanf("%d", &temp);
 
