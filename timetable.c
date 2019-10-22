@@ -337,7 +337,7 @@ int adminMain(void){
 	    		break;
 	    	case 10: DisenrollAStudent(studentListp, AllCourses, CoursesAMT);
 	    		break;
-	    	case 11:
+	    	case 11: saveStudentList(studentListp);
 	    	printf("Do you wish to lock the system?\nEnter y or n\n");
 	    	scanf("%d %c",&buffer, &lock);
 	    	sort(studentListp);
